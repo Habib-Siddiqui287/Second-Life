@@ -31,9 +31,11 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-9 h-9 rounded-xl bg-[#0F5D28] flex items-center justify-center text-white font-extrabold text-sm shadow-sm group-hover:scale-105 transition-transform">
-              SL
-            </div>
+           <img
+  src="/images/IMG-20260831-WA0000.jpg.jpeg"
+  alt="SecondLife"
+  className="w-9 h-9 object-contain rounded-xl group-hover:scale-105 transition-transform"
+/>
             <div className="flex flex-col">
               <span className="font-extrabold text-slate-900 text-lg leading-tight tracking-tight">
                 Second<span className="text-[#15803D]">Life</span>
