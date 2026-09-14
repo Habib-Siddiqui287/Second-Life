@@ -1,7 +1,8 @@
-﻿import uuid
+import uuid
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+
 from accounts.models import Profile
 from organizations.models import Organization, OrganizationVerification
 from donations.models import Category, Donation, DonationImage, SavedItem
@@ -9,30 +10,74 @@ from item_requests.models import DonationRequest
 from connections.models import Connection, Delivery
 from notifications.models import Notification
 from dashboard.models import ActivityLog, ContactMessage
+from chatbot.models import ChatbotFAQ
+
 
 User = get_user_model()
+
 
 class Command(BaseCommand):
     help = "Seeds database with rich, realistic demo data for SecondLife platform"
 
     def handle(self, *args, **kwargs):
-        self.stdout.write(self.style.NOTICE("Seeding SecondLife database..."))
+        self.stdout.write(
+            self.style.NOTICE("Seeding SecondLife database...")
+        )
 
         # 1. Categories
         categories_data = [
-            {"name": "Clothes", "slug": "clothes", "icon": "Shirt", "description": "Gently used or new jackets, shirts, winter coats, and shoes."},
-            {"name": "Books", "slug": "books", "icon": "BookOpen", "description": "Textbooks, fiction, children's storybooks, and reference literature."},
-            {"name": "Electronics", "slug": "electronics", "icon": "Laptop", "description": "Computers, displays, desk lamps, kitchen appliances, and chargers."},
-            {"name": "Furniture", "slug": "furniture", "icon": "Armchair", "description": "Desks, dining tables, wooden chairs, bookshelves, and sofas."},
-            {"name": "Food", "slug": "food", "icon": "Apple", "description": "Canned staples, dry provisions, sealed pantry items, and produce."},
-            {"name": "Other", "slug": "other", "icon": "Package", "description": "Household tools, kitchenware, toys, and miscellaneous utility goods."},
+            {
+                "name": "Clothes",
+                "slug": "clothes",
+                "icon": "Shirt",
+                "description": "Gently used or new jackets, shirts, winter coats, and shoes.",
+            },
+            {
+                "name": "Books",
+                "slug": "books",
+                "icon": "BookOpen",
+                "description": "Textbooks, fiction, children's storybooks, and reference literature.",
+            },
+            {
+                "name": "Electronics",
+                "slug": "electronics",
+                "icon": "Laptop",
+                "description": "Computers, displays, desk lamps, kitchen appliances, and chargers.",
+            },
+            {
+                "name": "Furniture",
+                "slug": "furniture",
+                "icon": "Armchair",
+                "description": "Desks, dining tables, wooden chairs, bookshelves, and sofas.",
+            },
+            {
+                "name": "Food",
+                "slug": "food",
+                "icon": "Apple",
+                "description": "Canned staples, dry provisions, sealed pantry items, and produce.",
+            },
+            {
+                "name": "Other",
+                "slug": "other",
+                "icon": "Package",
+                "description": "Household tools, kitchenware, toys, and miscellaneous utility goods.",
+            },
         ]
 
         categories = {}
+
         for cdata in categories_data:
-            cat, _ = Category.objects.get_or_create(slug=cdata["slug"], defaults=cdata)
+            cat, _ = Category.objects.get_or_create(
+                slug=cdata["slug"],
+                defaults=cdata
+            )
             categories[cdata["slug"]] = cat
-        self.stdout.write(self.style.SUCCESS(f"Loaded {len(categories)} categories."))
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Loaded {len(categories)} categories."
+            )
+        )
 
         # 2. Admin User
         admin, _ = User.objects.get_or_create(
@@ -49,9 +94,16 @@ class Command(BaseCommand):
                 "is_verified": True,
             }
         )
+
         admin.set_password("password123")
         admin.save()
-        Profile.objects.get_or_create(user=admin, defaults={"bio": "SecondLife Platform Director"})
+
+        Profile.objects.get_or_create(
+            user=admin,
+            defaults={
+                "bio": "SecondLife Platform Director"
+            }
+        )
 
         # 3. Donors
         donor_mamoon, _ = User.objects.get_or_create(
@@ -66,13 +118,19 @@ class Command(BaseCommand):
                 "is_verified": True,
             }
         )
+
         donor_mamoon.set_password("password123")
         donor_mamoon.save()
+
         Profile.objects.get_or_create(
             user=donor_mamoon,
             defaults={
                 "bio": "Passionate about circular economy and sustainable zero-waste living.",
-                "preferred_categories": ["furniture", "electronics", "books"],
+                "preferred_categories": [
+                    "furniture",
+                    "electronics",
+                    "books"
+                ],
                 "pickup_radius": 15,
                 "handover_preference": "PICKUP"
             }
@@ -90,13 +148,18 @@ class Command(BaseCommand):
                 "is_verified": True,
             }
         )
+
         donor_sarah.set_password("password123")
         donor_sarah.save()
+
         Profile.objects.get_or_create(
             user=donor_sarah,
             defaults={
                 "bio": "Downsizing and giving durable quality home items a second life.",
-                "preferred_categories": ["furniture", "clothes"],
+                "preferred_categories": [
+                    "furniture",
+                    "clothes"
+                ],
                 "pickup_radius": 10,
                 "handover_preference": "PICKUP"
             }
@@ -115,9 +178,14 @@ class Command(BaseCommand):
                 "is_verified": True,
             }
         )
+
         org_donor_user.set_password("password123")
         org_donor_user.save()
-        Profile.objects.get_or_create(user=org_donor_user)
+
+        Profile.objects.get_or_create(
+            user=org_donor_user
+        )
+
         Organization.objects.get_or_create(
             user=org_donor_user,
             defaults={
@@ -149,19 +217,25 @@ class Command(BaseCommand):
                 "is_verified": True,
             }
         )
+
         receiver_alex.set_password("password123")
         receiver_alex.save()
+
         Profile.objects.get_or_create(
             user=receiver_alex,
             defaults={
                 "bio": "Freelance eco-designer setting up a sustainable home office & community study corner.",
-                "needed_categories": ["furniture", "electronics", "books"],
+                "needed_categories": [
+                    "furniture",
+                    "electronics",
+                    "books"
+                ],
                 "pickup_radius": 12,
                 "handover_preference": "EITHER"
             }
         )
 
-        # Organization Receivers (One Verified, One Pending, One Rejected)
+        # Organization Receivers
         org_rec_verified_user, _ = User.objects.get_or_create(
             email="director@localyouth.org",
             defaults={
@@ -174,9 +248,14 @@ class Command(BaseCommand):
                 "is_verified": True,
             }
         )
+
         org_rec_verified_user.set_password("password123")
         org_rec_verified_user.save()
-        Profile.objects.get_or_create(user=org_rec_verified_user)
+
+        Profile.objects.get_or_create(
+            user=org_rec_verified_user
+        )
+
         Organization.objects.get_or_create(
             user=org_rec_verified_user,
             defaults={
@@ -195,7 +274,7 @@ class Command(BaseCommand):
             }
         )
 
-        # Pending Organization (for Admin Verification workflow demo)
+        # Pending Organization
         org_pending_user, _ = User.objects.get_or_create(
             email="contact@newhorizon.org",
             defaults={
@@ -208,9 +287,14 @@ class Command(BaseCommand):
                 "is_verified": False,
             }
         )
+
         org_pending_user.set_password("password123")
         org_pending_user.save()
-        Profile.objects.get_or_create(user=org_pending_user)
+
+        Profile.objects.get_or_create(
+            user=org_pending_user
+        )
+
         Organization.objects.get_or_create(
             user=org_pending_user,
             defaults={
@@ -228,9 +312,13 @@ class Command(BaseCommand):
             }
         )
 
-        self.stdout.write(self.style.SUCCESS("Created demo users & organizations."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Created demo users & organizations."
+            )
+        )
 
-        # 5. Donations Data (All non-human item graphics!)
+        # 5. Donations Data
         donations_pool = [
             {
                 "donor": donor_sarah,
@@ -245,7 +333,10 @@ class Command(BaseCommand):
                 "dimensions": "24\" W x 18\" D x 22\" H",
                 "weight": "15 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image12.png", "/images/items/image1.jpeg"]
+                "images": [
+                    "/images/items/image12.png",
+                    "/images/items/image1.jpeg"
+                ]
             },
             {
                 "donor": donor_mamoon,
@@ -260,7 +351,9 @@ class Command(BaseCommand):
                 "dimensions": "19\" W x 20\" D x 32\" H",
                 "weight": "12 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image17.png"]
+                "images": [
+                    "/images/items/image17.png"
+                ]
             },
             {
                 "donor": donor_mamoon,
@@ -275,7 +368,9 @@ class Command(BaseCommand):
                 "dimensions": "Size Large (Men/Unisex)",
                 "weight": "3 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image15.png"]
+                "images": [
+                    "/images/items/image15.png"
+                ]
             },
             {
                 "donor": org_donor_user,
@@ -290,7 +385,9 @@ class Command(BaseCommand):
                 "dimensions": "15.6 inch display",
                 "weight": "4.6 lbs",
                 "status": Donation.Status.MATCHED,
-                "images": ["/images/items/image7.png"]
+                "images": [
+                    "/images/items/image7.png"
+                ]
             },
             {
                 "donor": donor_sarah,
@@ -305,7 +402,9 @@ class Command(BaseCommand):
                 "dimensions": "Paperback stack",
                 "weight": "4 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image12.png"]
+                "images": [
+                    "/images/items/image12.png"
+                ]
             },
             {
                 "donor": donor_mamoon,
@@ -320,7 +419,9 @@ class Command(BaseCommand):
                 "dimensions": "18\" height",
                 "weight": "5 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image11.png"]
+                "images": [
+                    "/images/items/image11.png"
+                ]
             },
             {
                 "donor": donor_sarah,
@@ -335,7 +436,9 @@ class Command(BaseCommand):
                 "dimensions": "26\" W x 26\" D x 40\" H",
                 "weight": "28 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image11.png"]
+                "images": [
+                    "/images/items/image11.png"
+                ]
             },
             {
                 "donor": donor_mamoon,
@@ -350,7 +453,9 @@ class Command(BaseCommand):
                 "dimensions": "Hardcover & paperback mix",
                 "weight": "6 lbs",
                 "status": Donation.Status.COMPLETED,
-                "images": ["/images/items/image11.png"]
+                "images": [
+                    "/images/items/image11.png"
+                ]
             },
             {
                 "donor": donor_sarah,
@@ -365,7 +470,9 @@ class Command(BaseCommand):
                 "dimensions": "Standard grocery crate",
                 "weight": "25 lbs",
                 "status": Donation.Status.AVAILABLE,
-                "images": ["/images/items/image1.jpeg"]
+                "images": [
+                    "/images/items/image1.jpeg"
+                ]
             },
             {
                 "donor": donor_mamoon,
@@ -380,35 +487,54 @@ class Command(BaseCommand):
                 "dimensions": "82\" W x 34\" D x 32\" H",
                 "weight": "90 lbs",
                 "status": Donation.Status.IN_DELIVERY,
-                "images": ["/images/items/image8.png"]
+                "images": [
+                    "/images/items/image8.png"
+                ]
             },
         ]
 
         created_donations = []
+
         for d in donations_pool:
             img_list = d.pop("images")
+
             obj, _ = Donation.objects.get_or_create(
                 title=d["title"],
                 donor=d["donor"],
                 defaults=d
             )
+
             created_donations.append(obj)
-            # Add images
+
             for idx, img_path in enumerate(img_list):
                 DonationImage.objects.get_or_create(
                     donation=obj,
                     image_url=img_path,
-                    defaults={"is_primary": (idx == 0)}
+                    defaults={
+                        "is_primary": (idx == 0)
+                    }
                 )
 
-        self.stdout.write(self.style.SUCCESS(f"Created {len(created_donations)} donations."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Created {len(created_donations)} donations."
+            )
+        )
 
         # 6. Saved items
-        SavedItem.objects.get_or_create(user=receiver_alex, donation=created_donations[0])
-        SavedItem.objects.get_or_create(user=receiver_alex, donation=created_donations[1])
+        SavedItem.objects.get_or_create(
+            user=receiver_alex,
+            donation=created_donations[0]
+        )
+
+        SavedItem.objects.get_or_create(
+            user=receiver_alex,
+            donation=created_donations[1]
+        )
 
         # 7. Requests & Connections
-        # Request 1: Pending request from Alex for Oak Side Table
+
+        # Request 1
         req1, _ = DonationRequest.objects.get_or_create(
             donation=created_donations[0],
             receiver=receiver_alex,
@@ -418,7 +544,7 @@ class Command(BaseCommand):
             }
         )
 
-        # Request 2: Matched request from Local Youth Center for Laptop
+        # Request 2
         req2, _ = DonationRequest.objects.get_or_create(
             donation=created_donations[3],
             receiver=org_rec_verified_user,
@@ -428,7 +554,7 @@ class Command(BaseCommand):
             }
         )
 
-        # Connection for Request 2 (Matched / Pickup Scheduled)
+        # Connection for Request 2
         conn2, _ = Connection.objects.get_or_create(
             donation=created_donations[3],
             request=req2,
@@ -453,11 +579,31 @@ class Command(BaseCommand):
                 "vehicle_info": "White Ford Electric Transit - Plate #XYZ 123",
                 "estimated_arrival": "Tomorrow, 10:30 AM",
                 "timeline_steps": [
-                    {"step": "Request Submitted", "status": "COMPLETED", "timestamp": "Oct 21, 2026 2:15 PM"},
-                    {"step": "Request Approved", "status": "COMPLETED", "timestamp": "Oct 22, 2026 9:30 AM"},
-                    {"step": "Pickup Scheduled", "status": "COMPLETED", "timestamp": "Oct 23, 2026 11:00 AM"},
-                    {"step": "Courier Transit", "status": "IN_PROGRESS", "timestamp": "Tomorrow, 10:00 AM"},
-                    {"step": "Delivered", "status": "PENDING", "timestamp": "Estimated 10:30 AM"},
+                    {
+                        "step": "Request Submitted",
+                        "status": "COMPLETED",
+                        "timestamp": "Oct 21, 2026 2:15 PM"
+                    },
+                    {
+                        "step": "Request Approved",
+                        "status": "COMPLETED",
+                        "timestamp": "Oct 22, 2026 9:30 AM"
+                    },
+                    {
+                        "step": "Pickup Scheduled",
+                        "status": "COMPLETED",
+                        "timestamp": "Oct 23, 2026 11:00 AM"
+                    },
+                    {
+                        "step": "Courier Transit",
+                        "status": "IN_PROGRESS",
+                        "timestamp": "Tomorrow, 10:00 AM"
+                    },
+                    {
+                        "step": "Delivered",
+                        "status": "PENDING",
+                        "timestamp": "Estimated 10:30 AM"
+                    },
                 ]
             }
         )
@@ -471,6 +617,7 @@ class Command(BaseCommand):
                 "status": DonationRequest.Status.APPROVED,
             }
         )
+
         conn3, _ = Connection.objects.get_or_create(
             donation=created_donations[9],
             request=sofa_req,
@@ -484,6 +631,7 @@ class Command(BaseCommand):
                 "courier_notes": "Heavy item (90 lbs) - 2 couriers assigned.",
             }
         )
+
         Delivery.objects.get_or_create(
             connection=conn3,
             defaults={
@@ -494,11 +642,31 @@ class Command(BaseCommand):
                 "vehicle_info": "Eco Electric Van #SL-402",
                 "estimated_arrival": "Today, 3:15 PM",
                 "timeline_steps": [
-                    {"step": "Request Approved", "status": "COMPLETED", "timestamp": "Yesterday"},
-                    {"step": "Pickup Completed", "status": "COMPLETED", "timestamp": "Today, 1:45 PM"},
-                    {"step": "In Transit", "status": "IN_PROGRESS", "timestamp": "Today, 2:10 PM"},
-                    {"step": "Arriving Soon", "status": "PENDING", "timestamp": "Estimated 3:15 PM"},
-                    {"step": "Delivered & Verified", "status": "PENDING", "timestamp": "Pending arrival"},
+                    {
+                        "step": "Request Approved",
+                        "status": "COMPLETED",
+                        "timestamp": "Yesterday"
+                    },
+                    {
+                        "step": "Pickup Completed",
+                        "status": "COMPLETED",
+                        "timestamp": "Today, 1:45 PM"
+                    },
+                    {
+                        "step": "In Transit",
+                        "status": "IN_PROGRESS",
+                        "timestamp": "Today, 2:10 PM"
+                    },
+                    {
+                        "step": "Arriving Soon",
+                        "status": "PENDING",
+                        "timestamp": "Estimated 3:15 PM"
+                    },
+                    {
+                        "step": "Delivered & Verified",
+                        "status": "PENDING",
+                        "timestamp": "Pending arrival"
+                    },
                 ]
             }
         )
@@ -512,6 +680,7 @@ class Command(BaseCommand):
                 "status": DonationRequest.Status.COMPLETED,
             }
         )
+
         conn4, _ = Connection.objects.get_or_create(
             donation=created_donations[7],
             request=books_req,
@@ -535,6 +704,7 @@ class Command(BaseCommand):
                 "is_read": False,
             }
         )
+
         Notification.objects.get_or_create(
             user=receiver_alex,
             title="Match Confirmed! 🎉",
@@ -545,6 +715,7 @@ class Command(BaseCommand):
                 "is_read": False,
             }
         )
+
         Notification.objects.get_or_create(
             user=donor_mamoon,
             title="New Item Request! 📬",
@@ -560,12 +731,17 @@ class Command(BaseCommand):
         ActivityLog.objects.get_or_create(
             user=admin,
             action="SYSTEM_INIT",
-            defaults={"description": "SecondLife platform initialized with complete circular economy seed dataset."}
+            defaults={
+                "description": "SecondLife platform initialized with complete circular economy seed dataset."
+            }
         )
+
         ActivityLog.objects.get_or_create(
             user=donor_mamoon,
             action="DONATION_CREATED",
-            defaults={"description": "Donor Mamoon published 'Designer Scandinavian Sofa'."}
+            defaults={
+                "description": "Donor Mamoon published 'Designer Scandinavian Sofa'."
+            }
         )
 
         # 10. Sample contact message
@@ -579,4 +755,321 @@ class Command(BaseCommand):
             }
         )
 
-        self.stdout.write(self.style.SUCCESS("SecondLife seed data successfully loaded!"))
+        # ============================================================
+        # 11. CHATBOT FAQs
+        # ============================================================
+
+        chatbot_faqs = [
+            {
+                "question": "Who developed SecondLife?",
+                "answer": (
+                    "SecondLife was developed by:\n\n"
+                    "👨‍💻 Mamoon Shahid\n"
+                    "👨‍💻 Habib Ahmad Siddiqui\n"
+                    "👨‍💻 Maaj Ahmad\n\n"
+                    "Together, the team developed SecondLife — Give Things a Second Life, "
+                    "a platform designed to connect donors with people and organizations "
+                    "who need useful items."
+                ),
+                "keywords": (
+                    "developer, developers, developed by, created by, creator, "
+                    "who made, who created, development team, team, mamoon, "
+                    "habib, maaj"
+                ),
+                "category": "team",
+                "priority": 100,
+            },
+
+            {
+                "question": "What is SecondLife?",
+                "answer": (
+                    "SecondLife is a resource-sharing and donation platform that "
+                    "connects people who want to donate useful items with people "
+                    "and organizations who need them."
+                ),
+                "keywords": (
+                    "what is secondlife, what is second life, about secondlife, "
+                    "about second life, explain secondlife"
+                ),
+                "category": "general",
+                "priority": 90,
+            },
+
+            {
+                "question": "What is the purpose of SecondLife?",
+                "answer": (
+                    "The purpose of SecondLife is to give useful items a second life "
+                    "by connecting donors with people and organizations that need them. "
+                    "It also promotes reuse, reduces waste, and supports a circular economy."
+                ),
+                "keywords": (
+                    "purpose, goal, objective, aim, why secondlife, "
+                    "why was secondlife created"
+                ),
+                "category": "general",
+                "priority": 80,
+            },
+
+            {
+                "question": "How does SecondLife work?",
+                "answer": (
+                    "SecondLife works by connecting donors and receivers. "
+                    "Donors can list useful items, while receivers or organizations "
+                    "can browse available donations and request items they need."
+                ),
+                "keywords": (
+                    "how does secondlife work, how it works, working, "
+                    "process, platform process"
+                ),
+                "category": "general",
+                "priority": 80,
+            },
+
+            {
+                "question": "How can I donate an item?",
+                "answer": (
+                    "To donate an item, log in to your SecondLife account, "
+                    "open the donation section, provide the item details, "
+                    "select the appropriate category, add an image if available, "
+                    "and submit your donation."
+                ),
+                "keywords": (
+                    "how to donate, how can i donate, add donation, "
+                    "create donation, donate item, list item"
+                ),
+                "category": "donations",
+                "priority": 80,
+            },
+
+            {
+                "question": "What can I donate?",
+                "answer": (
+                    "You can donate useful items such as clothes, books, furniture, "
+                    "electronics, household items, educational materials, food, "
+                    "and other safe items that are in usable condition."
+                ),
+                "keywords": (
+                    "what can i donate, donation items, items to donate, "
+                    "what items, donate things"
+                ),
+                "category": "donations",
+                "priority": 75,
+            },
+
+            {
+                "question": "How can I request an item?",
+                "answer": (
+                    "To request an item, log in to your account, browse the available "
+                    "donations, open the item you need, and submit a request if it "
+                    "is available."
+                ),
+                "keywords": (
+                    "how to request, how can i request, request item, "
+                    "request donation, need item, receiver request"
+                ),
+                "category": "requests",
+                "priority": 80,
+            },
+
+            {
+                "question": "Who can receive donations?",
+                "answer": (
+                    "Individuals and eligible organizations can receive donations "
+                    "through SecondLife. Receivers can browse available items "
+                    "and request items that meet their needs."
+                ),
+                "keywords": (
+                    "who can receive, receiver, receivers, recipient, "
+                    "who gets donations"
+                ),
+                "category": "requests",
+                "priority": 70,
+            },
+
+            {
+                "question": "Can organizations use SecondLife?",
+                "answer": (
+                    "Yes. Organizations can use SecondLife to donate useful items "
+                    "or request items for their communities, programs, shelters, "
+                    "and other legitimate needs."
+                ),
+                "keywords": (
+                    "organization, organizations, ngo, charity, "
+                    "institution, foundation"
+                ),
+                "category": "organizations",
+                "priority": 75,
+            },
+
+            {
+                "question": "How does matching work?",
+                "answer": (
+                    "SecondLife helps connect available donations with people or "
+                    "organizations looking for those items. Matching can consider "
+                    "factors such as item category, availability, location, "
+                    "and the receiver's needs."
+                ),
+                "keywords": (
+                    "matching, match, matches, how matching works, "
+                    "donor receiver matching"
+                ),
+                "category": "matching",
+                "priority": 70,
+            },
+
+            {
+                "question": "Is SecondLife free?",
+                "answer": (
+                    "SecondLife is designed as a donation and resource-sharing "
+                    "platform. Users can use the platform to discover available "
+                    "items and connect with donors or receivers."
+                ),
+                "keywords": (
+                    "free, cost, costs, charges, price, payment, fee"
+                ),
+                "category": "general",
+                "priority": 60,
+            },
+
+            {
+                "question": "Why should I donate?",
+                "answer": (
+                    "Donating useful items can help people and organizations in need, "
+                    "reduce unnecessary waste, encourage reuse, and give valuable "
+                    "items a second life."
+                ),
+                "keywords": (
+                    "why donate, benefits of donating, donation benefits, "
+                    "reason to donate"
+                ),
+                "category": "donations",
+                "priority": 65,
+            },
+
+            {
+                "question": "What donation categories are available?",
+                "answer": (
+                    "SecondLife currently supports categories such as Clothes, "
+                    "Books, Electronics, Furniture, Food, and Other useful items."
+                ),
+                "keywords": (
+                    "categories, donation categories, item categories, "
+                    "types of donations, available categories"
+                ),
+                "category": "donations",
+                "priority": 65,
+            },
+
+            {
+                "question": "Can I donate electronics?",
+                "answer": (
+                    "Yes. Useful electronics can be donated through SecondLife. "
+                    "Please make sure the item is safe, functional, and accurately "
+                    "described before listing it."
+                ),
+                "keywords": (
+                    "electronics, electronic items, donate electronics, "
+                    "laptop, computer, phone"
+                ),
+                "category": "donations",
+                "priority": 60,
+            },
+
+            {
+                "question": "Can I donate clothes?",
+                "answer": (
+                    "Yes. Clothes can be donated through SecondLife. "
+                    "It is best to donate clothing that is clean, safe, "
+                    "and in usable condition."
+                ),
+                "keywords": (
+                    "clothes, clothing, donate clothes, shirts, jackets, shoes"
+                ),
+                "category": "donations",
+                "priority": 60,
+            },
+
+            {
+                "question": "How does delivery work?",
+                "answer": (
+                    "Depending on the donation, handover may be arranged through "
+                    "pickup, delivery, or an available option agreed by the users. "
+                    "Connection and delivery information can be used to track the process."
+                ),
+                "keywords": (
+                    "delivery, deliver, pickup, pick up, handover, "
+                    "transport, courier"
+                ),
+                "category": "delivery",
+                "priority": 65,
+            },
+
+            {
+                "question": "Is my information safe?",
+                "answer": (
+                    "Users should protect their account credentials and only share "
+                    "necessary information through the platform. Avoid sharing "
+                    "passwords or sensitive personal information with other users."
+                ),
+                "keywords": (
+                    "safe, safety, information safe, privacy, secure, "
+                    "security, personal information"
+                ),
+                "category": "safety",
+                "priority": 65,
+            },
+
+            {
+                "question": "How do I create an account?",
+                "answer": (
+                    "You can create an account through the SecondLife registration "
+                    "process. Provide the required information, choose the appropriate "
+                    "account type, and complete registration."
+                ),
+                "keywords": (
+                    "create account, register, registration, sign up, signup, "
+                    "new account"
+                ),
+                "category": "accounts",
+                "priority": 60,
+            },
+
+            {
+                "question": "What is the environmental benefit of SecondLife?",
+                "answer": (
+                    "SecondLife encourages reuse and helps keep useful items "
+                    "in circulation instead of sending them to waste. "
+                    "This supports a more sustainable and circular economy."
+                ),
+                "keywords": (
+                    "environment, environmental, sustainability, sustainable, "
+                    "waste, recycle, reuse, circular economy"
+                ),
+                "category": "general",
+                "priority": 65,
+            },
+        ]
+
+        for faq in chatbot_faqs:
+            ChatbotFAQ.objects.update_or_create(
+                question=faq["question"],
+                defaults={
+                    "answer": faq["answer"],
+                    "keywords": faq["keywords"],
+                    "category": faq["category"],
+                    "is_active": True,
+                    "priority": faq["priority"],
+                },
+            )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Loaded {len(chatbot_faqs)} chatbot FAQs."
+            )
+        )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                "SecondLife seed data successfully loaded!"
+            )
+        )
