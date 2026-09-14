@@ -9,7 +9,7 @@ export const getBaseURL = () => {
   if (envUrl && !envUrl.includes('<your-render-url>') && !envUrl.includes('placeholder')) {
     return envUrl;
   }
-  return 'https://second-life-v6st.onrender.com/api';
+  return 'https://second-life-e45t.onrender.com/api';
 };
 
 const api = axios.create({
