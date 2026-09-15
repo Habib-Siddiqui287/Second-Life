@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Sparkles, MapPin, Tag, Eye } from 'lucide-react';
@@ -241,14 +241,13 @@ export default function PopularDonations() {
                     <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span className="truncate">{item.location}</span>
                   </div>
-
                   <Link
-                    to={`/categories?category=${item.slug}`}
-                    className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-[#15803D] text-[#15803D] hover:text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 group/btn shadow-sm"
-                  >
-                    <span>View Donation</span>
-                    <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
+                      to={`/donations/${item.id}`}
+                        className="w-full py-2.5 px-4 bg-emerald-50 hover:bg-[#15803D] text-[#15803D] hover:text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-200 group/btn shadow-sm"
+                        >
+                        <span>View Donation</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
+                </Link>
                 </div>
               </div>
             </motion.div>
