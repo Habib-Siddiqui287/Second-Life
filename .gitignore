@@ -1,0 +1,7 @@
+
+# Generated/local files
+__pycache__/
+*.pyc
+node_modules/
+media/profiles/
+
