@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+
 import {
   Bot,
   X,
@@ -8,7 +9,8 @@ import {
   Sparkles
 } from 'lucide-react';
 
-const API_URL = 'https://second-life-e45t.onrender.com/api/chat/';
+const API_URL =
+  'https://second-life-e45t.onrender.com/api/chat/';
 
 const INITIAL_MESSAGE = {
   id: 'welcome-message',
@@ -25,7 +27,8 @@ const DEFAULT_SUGGESTIONS = [
   'How does matching work?'
 ];
 
-// Helper: Safely renders bot responses supporting bold text, bullet points, numbered lists, and line breaks
+// Helper: Safely renders bot responses supporting bold text,
+// bullet points, numbered lists, and line breaks
 function renderFormattedMessage(text) {
   if (!text) return null;
 
@@ -38,34 +41,65 @@ function renderFormattedMessage(text) {
           return <div key={lineIdx} className="h-1.5" />;
         }
 
-        const bulletMatch = line.match(/^(\s*[•\-\*]\s+)(.*)$/);
-        const numberMatch = line.match(/^(\s*\d+\.\s+)(.*)$/);
+        const bulletMatch = line.match(
+          /^\s*[•\-*]\s+(.*)$/
+        );
+
+        const numberMatch = line.match(
+          /^\s*(\d+\.)\s+(.*)$/
+        );
 
         let prefix = null;
         let content = line;
 
         if (bulletMatch) {
-          prefix = <span className="font-bold text-[#087A3F] mr-1.5 shrink-0">•</span>;
-          content = bulletMatch[2];
+          prefix = (
+            <span className="font-bold text-[#087A3F] mr-1.5 shrink-0">
+              •
+            </span>
+          );
+
+          content = bulletMatch[1];
         } else if (numberMatch) {
-          prefix = <span className="font-bold text-[#087A3F] mr-1.5 shrink-0">{numberMatch[1].trim()} </span>;
+          prefix = (
+            <span className="font-bold text-[#087A3F] mr-1.5 shrink-0">
+              {numberMatch[1]}
+            </span>
+          );
+
           content = numberMatch[2];
         }
 
         const parts = content.split(/(\*\*.*?\*\*)/g);
 
         return (
-          <div key={lineIdx} className={bulletMatch || numberMatch ? 'flex items-start pl-0.5' : ''}>
+          <div
+            key={lineIdx}
+            className={
+              bulletMatch || numberMatch
+                ? 'flex items-start pl-0.5'
+                : ''
+            }
+          >
             {prefix}
+
             <span className="flex-1">
               {parts.map((part, partIdx) => {
-                if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+                if (
+                  part.startsWith('**') &&
+                  part.endsWith('**') &&
+                  part.length >= 4
+                ) {
                   return (
-                    <strong key={partIdx} className="font-bold text-slate-900">
+                    <strong
+                      key={partIdx}
+                      className="font-bold text-slate-900"
+                    >
                       {part.slice(2, -2)}
                     </strong>
                   );
                 }
+
                 return part;
               })}
             </span>
@@ -76,9 +110,52 @@ function renderFormattedMessage(text) {
   );
 }
 
+// --------------------------------------------------
+// Character-by-character bot response streaming
+// --------------------------------------------------
+function streamBotMessage(text, setMessages) {
+  const botId = `bot-${Date.now()}-${Math.random()}`;
+
+  setMessages((prev) => [
+    ...prev,
+    {
+      id: botId,
+      sender: 'bot',
+      text: ''
+    }
+  ]);
+
+  let index = 0;
+
+  const streamNextCharacter = () => {
+    if (index >= text.length) {
+      return;
+    }
+
+    index += 1;
+
+    setMessages((prev) =>
+      prev.map((message) =>
+        message.id === botId
+          ? {
+              ...message,
+              text: text.slice(0, index)
+            }
+          : message
+      )
+    );
+
+    setTimeout(streamNextCharacter, 18);
+  };
+
+  streamNextCharacter();
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+
   const [input, setInput] = useState('');
+
   const [sending, setSending] = useState(false);
 
   const [messages, setMessages] = useState([
@@ -94,6 +171,7 @@ export default function ChatWidget() {
   // --------------------------------------------------
   // Auto scroll
   // --------------------------------------------------
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: 'smooth'
@@ -103,6 +181,7 @@ export default function ChatWidget() {
   // --------------------------------------------------
   // Reset / New Chat
   // --------------------------------------------------
+
   const resetChat = () => {
     setMessages([
       {
@@ -112,13 +191,16 @@ export default function ChatWidget() {
     ]);
 
     setSuggestions(DEFAULT_SUGGESTIONS);
+
     setInput('');
+
     setSending(false);
   };
 
   // --------------------------------------------------
   // Send message directly to Render production backend
   // --------------------------------------------------
+
   const sendMessage = async (messageOverride = null) => {
     const text = (
       messageOverride !== null
@@ -140,22 +222,27 @@ export default function ChatWidget() {
     ]);
 
     setInput('');
+
     setSending(true);
 
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
+
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json'
         },
+
         body: JSON.stringify({
           message: text
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Chatbot API error: ${response.status}`);
+        throw new Error(
+          `Chatbot API error: ${response.status}`
+        );
       }
 
       const data = await response.json();
@@ -169,41 +256,61 @@ export default function ChatWidget() {
           ? data.response
           : '';
 
-      console.log('[SecondLife Chatbot] API URL:', API_URL);
-      console.log('[SecondLife Chatbot] User message:', text);
-      console.log('[SecondLife Chatbot] HTTP status:', response.status);
-      console.log('[SecondLife Chatbot] API response:', data);
-      console.log('[SecondLife Chatbot] Reply:', reply);
+      console.log(
+        '[SecondLife Chatbot] API URL:',
+        API_URL
+      );
+
+      console.log(
+        '[SecondLife Chatbot] User message:',
+        text
+      );
+
+      console.log(
+        '[SecondLife Chatbot] HTTP status:',
+        response.status
+      );
+
+      console.log(
+        '[SecondLife Chatbot] API response:',
+        data
+      );
+
+      console.log(
+        '[SecondLife Chatbot] Reply:',
+        reply
+      );
 
       if (!reply) {
-        throw new Error('Empty response received from chatbot.');
+        throw new Error(
+          'Empty response received from chatbot.'
+        );
       }
 
-      const botMessage = {
-        id: `bot-${Date.now()}-${Math.random()}`,
-        sender: 'bot',
-        text: reply
-      };
+      // --------------------------------------------------
+      // Stream bot response character by character
+      // --------------------------------------------------
 
-      // Add complete bot message directly to React message state
-      setMessages((prev) => [
-        ...prev,
-        botMessage
-      ]);
+      streamBotMessage(reply, setMessages);
 
       const nextSuggestions =
-        Array.isArray(data?.suggestions) && data.suggestions.length > 0
+        Array.isArray(data?.suggestions) &&
+        data.suggestions.length > 0
           ? data.suggestions
           : DEFAULT_SUGGESTIONS;
 
       setSuggestions(nextSuggestions);
     } catch (error) {
-      console.error('[SecondLife Chatbot] error:', error);
+      console.error(
+        '[SecondLife Chatbot] error:',
+        error
+      );
 
       const errorMessage = {
         id: `bot-err-${Date.now()}-${Math.random()}`,
         sender: 'bot',
-        text: 'Sorry, I am unable to connect with SecondLife right now. Please try again in a moment.'
+        text:
+          'Sorry, I am unable to connect with SecondLife right now. Please try again in a moment.'
       };
 
       setMessages((prev) => [
@@ -220,12 +327,14 @@ export default function ChatWidget() {
   // --------------------------------------------------
   // Enter key
   // --------------------------------------------------
+
   const handleKeyDown = (e) => {
     if (
       e.key === 'Enter' &&
       !e.shiftKey
     ) {
       e.preventDefault();
+
       sendMessage();
     }
   };
@@ -233,15 +342,18 @@ export default function ChatWidget() {
   // --------------------------------------------------
   // Suggestion click
   // --------------------------------------------------
+
   const handleSuggestionClick = (suggestion) => {
     sendMessage(suggestion);
   };
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9999]">
+
       {/* ==================================================
           CHAT WINDOW
       ================================================== */}
+
       {open && (
         <div
           className="
@@ -262,29 +374,41 @@ export default function ChatWidget() {
             flex-col
           "
         >
+
           {/* ==================================================
               HEADER
           ================================================== */}
+
           <div className="bg-[#087A3F] px-4 py-3 flex items-center justify-between text-white shrink-0">
+
             <div className="flex items-center gap-3 min-w-0">
+
               <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center shrink-0">
                 <Bot className="w-5 h-5" />
               </div>
 
               <div className="min-w-0">
+
                 <div className="font-bold text-sm">
                   SecondLife AI
                 </div>
 
                 <div className="text-[11px] text-green-100 flex items-center gap-1">
+
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" />
+
                   Online
+
                 </div>
+
               </div>
+
             </div>
 
             <div className="flex items-center gap-1">
+
               {/* New Chat */}
+
               <button
                 type="button"
                 onClick={resetChat}
@@ -304,6 +428,7 @@ export default function ChatWidget() {
               </button>
 
               {/* Close */}
+
               <button
                 type="button"
                 onClick={() => setOpen(false)}
@@ -321,14 +446,19 @@ export default function ChatWidget() {
               >
                 <X className="w-5 h-5" />
               </button>
+
             </div>
+
           </div>
 
           {/* ==================================================
               MESSAGES
           ================================================== */}
+
           <div className="flex-1 overflow-y-auto bg-slate-50 p-3 sm:p-4 space-y-4">
+
             {messages.map((message) => (
+
               <div
                 key={message.id}
                 className={`flex ${
@@ -337,6 +467,7 @@ export default function ChatWidget() {
                     : 'justify-start'
                 }`}
               >
+
                 <div
                   className={`flex items-end gap-2 max-w-[88%] ${
                     message.sender === 'user'
@@ -344,7 +475,9 @@ export default function ChatWidget() {
                       : ''
                   }`}
                 >
+
                   {/* Avatar */}
+
                   <div
                     className={`
                       w-7
@@ -361,14 +494,17 @@ export default function ChatWidget() {
                       }
                     `}
                   >
+
                     {message.sender === 'user' ? (
                       <User className="w-4 h-4" />
                     ) : (
                       <Bot className="w-4 h-4" />
                     )}
+
                   </div>
 
                   {/* Bubble */}
+
                   <div
                     className={`
                       px-3.5
@@ -385,63 +521,90 @@ export default function ChatWidget() {
                       }
                     `}
                   >
+
                     {message.sender === 'bot'
-                      ? renderFormattedMessage(message.text)
+                      ? renderFormattedMessage(
+                          message.text
+                        )
                       : message.text}
+
                   </div>
+
                 </div>
+
               </div>
+
             ))}
 
             {/* Backend waiting indicator */}
+
             {sending && (
               <div className="flex justify-start">
+
                 <div className="flex items-end gap-2">
+
                   <div className="w-7 h-7 rounded-full bg-[#087A3F] text-white flex items-center justify-center">
                     <Bot className="w-4 h-4" />
                   </div>
 
                   <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-xs">
+
                     <div className="flex items-center gap-1.5">
+
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce" />
+
                       <span
                         className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce"
                         style={{
                           animationDelay: '150ms'
                         }}
                       />
+
                       <span
                         className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-bounce"
                         style={{
                           animationDelay: '300ms'
                         }}
                       />
+
                     </div>
+
                   </div>
+
                 </div>
+
               </div>
             )}
 
             <div ref={messagesEndRef} />
+
           </div>
 
           {/* ==================================================
               SUGGESTIONS
           ================================================== */}
+
           {!sending &&
             suggestions.length > 0 && (
+
               <div className="px-3 sm:px-4 pt-2 pb-2 bg-white border-t border-slate-100 shrink-0">
+
                 <div className="flex items-center gap-1.5 mb-2">
+
                   <Sparkles className="w-3.5 h-3.5 text-[#087A3F]" />
 
                   <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                     Suggested questions
                   </span>
+
                 </div>
 
                 <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
-                  {suggestions.slice(0, 5).map(
-                    (suggestion, index) => (
+
+                  {suggestions
+                    .slice(0, 5)
+                    .map((suggestion, index) => (
+
                       <button
                         key={`${suggestion}-${index}`}
                         type="button"
@@ -467,17 +630,23 @@ export default function ChatWidget() {
                       >
                         {suggestion}
                       </button>
-                    )
-                  )}
+
+                    ))}
+
                 </div>
+
               </div>
+
             )}
 
           {/* ==================================================
               INPUT
           ================================================== */}
+
           <div className="p-3 bg-white border-t border-slate-200 shrink-0">
+
             <div className="flex items-center gap-2">
+
               <input
                 type="text"
                 value={input}
@@ -533,14 +702,18 @@ export default function ChatWidget() {
               >
                 <Send className="w-4 h-4" />
               </button>
+
             </div>
+
           </div>
+
         </div>
       )}
 
       {/* ==================================================
           FLOATING CHAT BUTTON
       ================================================== */}
+
       <button
         type="button"
         onClick={() =>
@@ -569,12 +742,15 @@ export default function ChatWidget() {
           sm:gap-3
         "
       >
+
         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+
           {open ? (
             <X className="w-4 h-4" />
           ) : (
             <Bot className="w-4 h-4" />
           )}
+
         </div>
 
         <span className="font-bold text-sm whitespace-nowrap">
@@ -582,7 +758,9 @@ export default function ChatWidget() {
         </span>
 
         <span className="w-2 h-2 rounded-full bg-emerald-300 shrink-0" />
+
       </button>
+
     </div>
   );
 }

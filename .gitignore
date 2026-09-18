@@ -1,7 +1,15 @@
-
 # Generated/local files
 __pycache__/
 *.pyc
-node_modules/
-media/profiles/
 
+# Node
+node_modules/
+dist/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# User uploaded media
+media/profiles/
