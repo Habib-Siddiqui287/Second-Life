@@ -241,37 +241,33 @@ FRONTEND_URL = os.environ.get(
 
 
 # ============================================================
-# EMAIL - GMAIL SMTP
+# EMAIL - BREVO HTTPS API
 # ============================================================
 
+# Render Free blocks outbound SMTP ports. Second Life therefore sends
+# transactional email through Brevo's HTTPS API instead.
+#
 # IMPORTANT:
-# Do NOT put your Gmail password/App Password directly here.
-# These values come from environment variables.
+# BREVO_API_KEY must exist only in the backend environment.
+# Never put it in React/Vite/Vercel client-side code.
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-
-EMAIL_HOST = 'smtp.gmail.com'
-
-EMAIL_PORT = 587
-
-EMAIL_USE_TLS = True
-
-EMAIL_HOST_USER = os.environ.get(
-    'EMAIL_HOST_USER',
-    'givesthingsasecondlife@gmail.com'
-)
-
-EMAIL_HOST_PASSWORD = os.environ.get(
-    'EMAIL_HOST_PASSWORD',
+BREVO_API_KEY = os.environ.get(
+    'BREVO_API_KEY',
     ''
-)
+).strip()
 
-DEFAULT_FROM_EMAIL = os.environ.get(
-    'DEFAULT_FROM_EMAIL',
+EMAIL_FROM_EMAIL = os.environ.get(
+    'EMAIL_FROM_EMAIL',
     'givesthingsasecondlife@gmail.com'
-)
+).strip()
 
-EMAIL_TIMEOUT = 20
+EMAIL_FROM_NAME = os.environ.get(
+    'EMAIL_FROM_NAME',
+    'Second Life'
+).strip()
+
+# Kept for compatibility with any existing code that reads this setting.
+DEFAULT_FROM_EMAIL = EMAIL_FROM_EMAIL
 
 
 # ============================================================
