@@ -4,7 +4,6 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.core.cache import cache
-from django.core.mail import send_mail
 from django.db import IntegrityError
 from django.utils import timezone
 
@@ -103,7 +102,7 @@ Second Life Team
     sent = send_platform_email(email, subject, message)
     if not sent:
         raise RuntimeError(
-            'Registration OTP email could not be sent. Configure the Gmail SMTP App Password for Second Life.'
+            'Registration OTP email could not be sent. Check the Brevo API key and verified sender configuration.'
         )
     return otp
 
@@ -283,9 +282,12 @@ class VerifyRegistrationOTPView(APIView):
         )
 
         try:
-            send_mail(
-                subject='Welcome to Second Life! 🌱',
-                message=f"""Hello {user.name},
+            from services.email_service import send_platform_email
+
+            sent = send_platform_email(
+                user.email,
+                'Welcome to Second Life! 🌱',
+                f"""Hello {user.name},
 
 Welcome to Second Life! 🌱
 
@@ -305,10 +307,13 @@ Thank you for joining Second Life and helping us give useful items a second life
 Regards,
 Second Life Team
 """,
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[user.email],
-                fail_silently=False,
             )
+
+            if not sent:
+                print(
+                    'Registration success email error: '
+                    'Brevo could not accept the message.'
+                )
 
         except Exception as error:
             print(
