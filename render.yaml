@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: secondlife-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate"
+    startCommand: "gunicorn config.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: ".onrender.com"
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: EMAIL_FROM_EMAIL
+        value: "givesthingsasecondlife@gmail.com"
+      - key: EMAIL_FROM_NAME
+        value: "Second Life"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: secondlife-db
+          property: connectionString
+
+  - type: staticSite
+    name: secondlife-frontend
+    region: oregon
+    plan: free
+    buildCommand: "npm ci && npm run build"
+    publishPath: dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+
+databases:
+  - name: secondlife-db
+    plan: free
+    region: oregon
