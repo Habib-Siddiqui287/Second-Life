@@ -1,13 +1,12 @@
-import uuid
+import os
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from accounts.models import Profile
-from organizations.models import Organization, OrganizationVerification
-from donations.models import Category, Donation, DonationImage, SavedItem
-from item_requests.models import DonationRequest
-from connections.models import Connection, Delivery
+from organizations.models import Organization
+from donations.models import Category, Donation, DonationImage
 from notifications.models import Notification
 from dashboard.models import ActivityLog, ContactMessage
 from chatbot.models import ChatbotFAQ
@@ -17,20 +16,23 @@ User = get_user_model()
 
 
 class Command(BaseCommand):
-    help = "Seeds database with rich, realistic demo data for SecondLife platform"
+    help = "Seeds database with realistic Pakistan-based demo data for SecondLife"
 
     def handle(self, *args, **kwargs):
         self.stdout.write(
             self.style.NOTICE("Seeding SecondLife database...")
         )
 
-        # 1. Categories
+        # ============================================================
+        # 1. CATEGORIES
+        # ============================================================
+
         categories_data = [
             {
                 "name": "Clothes",
                 "slug": "clothes",
                 "icon": "Shirt",
-                "description": "Gently used or new jackets, shirts, winter coats, and shoes.",
+                "description": "Gently used or new jackets, shirts, winter coats, shoes, and clothing.",
             },
             {
                 "name": "Books",
@@ -54,362 +56,14 @@ class Command(BaseCommand):
                 "name": "Food",
                 "slug": "food",
                 "icon": "Apple",
-                "description": "Canned staples, dry provisions, sealed pantry items, and produce.",
+                "description": "Canned staples, dry provisions, sealed pantry items, and other safe food items.",
             },
             {
                 "name": "Other",
                 "slug": "other",
                 "icon": "Package",
-                "description": "Household tools, kitchenware, toys, and miscellaneous utility goods.",
+                "description": "Household tools, kitchenware, toys, and miscellaneous useful goods.",
             },
-        ]
-
-        categories = {}
-
-        for cdata in categories_data:
-            cat, _ = Category.objects.get_or_create(
-                slug=cdata["slug"],
-                defaults=cdata
-            )
-            categories[cdata["slug"]] = cat
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Loaded {len(categories)} categories."
-            )
-        )
-
-        # 2. Admin User
-        admin, _ = User.objects.get_or_create(
-            email="admin@secondlife.eco",
-            defaults={
-                "name": "SecondLife Administration",
-                "phone": "+1 (555) 010-9900",
-                "role": User.Role.ADMIN,
-                "account_type": User.AccountType.INDIVIDUAL,
-                "city": "Seattle",
-                "address": "400 Pine St, Suite 500",
-                "is_staff": True,
-                "is_superuser": True,
-                "is_verified": True,
-            }
-        )
-
-        admin.set_password("Admin@12345")
-        admin.save()
-
-        Profile.objects.get_or_create(
-            user=admin,
-            defaults={
-                "bio": "SecondLife Platform Director"
-            }
-        )
-
-        # 3. Donors
-        donor_mamoon, _ = User.objects.get_or_create(
-            email="mamoon@secondlife.eco",
-            defaults={
-                "name": "Mamoon Al-Hashmi",
-                "phone": "+1 (555) 012-3456",
-                "role": User.Role.DONOR,
-                "account_type": User.AccountType.INDIVIDUAL,
-                "city": "Seattle",
-                "address": "123 Sustainability Way, Apt 4B",
-                "is_verified": True,
-            }
-        )
-
-        donor_mamoon.set_password("password123")
-        donor_mamoon.save()
-
-        Profile.objects.get_or_create(
-            user=donor_mamoon,
-            defaults={
-                "bio": "Passionate about circular economy and sustainable zero-waste living.",
-                "preferred_categories": [
-                    "furniture",
-                    "electronics",
-                    "books"
-                ],
-                "pickup_radius": 15,
-                "handover_preference": "PICKUP"
-            }
-        )
-
-        donor_sarah, _ = User.objects.get_or_create(
-            email="sarah.j@secondlife.eco",
-            defaults={
-                "name": "Sarah Jenkins",
-                "phone": "+1 (555) 014-7890",
-                "role": User.Role.DONOR,
-                "account_type": User.AccountType.INDIVIDUAL,
-                "city": "Seattle",
-                "address": "142 Oakwood Drive, Eastside",
-                "is_verified": True,
-            }
-        )
-
-        donor_sarah.set_password("password123")
-        donor_sarah.save()
-
-        Profile.objects.get_or_create(
-            user=donor_sarah,
-            defaults={
-                "bio": "Downsizing and giving durable quality home items a second life.",
-                "preferred_categories": [
-                    "furniture",
-                    "clothes"
-                ],
-                "pickup_radius": 10,
-                "handover_preference": "PICKUP"
-            }
-        )
-
-        # Organization Donor
-        org_donor_user, _ = User.objects.get_or_create(
-            email="contact@greenearth.org",
-            defaults={
-                "name": "Green Earth Foundation",
-                "phone": "+1 (555) 018-4422",
-                "role": User.Role.DONOR,
-                "account_type": User.AccountType.ORGANIZATION,
-                "city": "Seattle",
-                "address": "888 Eco Boulevard",
-                "is_verified": True,
-            }
-        )
-
-        org_donor_user.set_password("password123")
-        org_donor_user.save()
-
-        Profile.objects.get_or_create(
-            user=org_donor_user
-        )
-
-        Organization.objects.get_or_create(
-            user=org_donor_user,
-            defaults={
-                "organization_name": "Green Earth Foundation",
-                "organization_type": Organization.OrgType.FOUNDATION,
-                "license_number": "WA-NGO-88219",
-                "contact_person": "David Vance",
-                "official_email": "contact@greenearth.org",
-                "phone": "+1 (555) 018-4422",
-                "address": "888 Eco Boulevard",
-                "city": "Seattle",
-                "website": "https://greenearth.org",
-                "description": "Donating refurbished educational computers and library books to underprivileged youth centers.",
-                "verification_status": Organization.VerificationStatus.VERIFIED,
-                "verified_at": timezone.now()
-            }
-        )
-
-        # 4. Receivers
-        receiver_alex, _ = User.objects.get_or_create(
-            email="alex.rivera@secondlife.eco",
-            defaults={
-                "name": "Alex Rivera",
-                "phone": "+1 (555) 019-3321",
-                "role": User.Role.RECEIVER,
-                "account_type": User.AccountType.INDIVIDUAL,
-                "city": "Seattle",
-                "address": "560 Lakeview Terrace, Ballard",
-                "is_verified": True,
-            }
-        )
-
-        receiver_alex.set_password("password123")
-        receiver_alex.save()
-
-        Profile.objects.get_or_create(
-            user=receiver_alex,
-            defaults={
-                "bio": "Freelance eco-designer setting up a sustainable home office & community study corner.",
-                "needed_categories": [
-                    "furniture",
-                    "electronics",
-                    "books"
-                ],
-                "pickup_radius": 12,
-                "handover_preference": "EITHER"
-            }
-        )
-
-        # Organization Receivers
-        org_rec_verified_user, _ = User.objects.get_or_create(
-            email="director@localyouth.org",
-            defaults={
-                "name": "Local Youth Center",
-                "phone": "+1 (555) 015-8833",
-                "role": User.Role.RECEIVER,
-                "account_type": User.AccountType.ORGANIZATION,
-                "city": "Seattle",
-                "address": "742 Community Way, Central District",
-                "is_verified": True,
-            }
-        )
-
-        org_rec_verified_user.set_password("password123")
-        org_rec_verified_user.save()
-
-        Profile.objects.get_or_create(
-            user=org_rec_verified_user
-        )
-
-        Organization.objects.get_or_create(
-            user=org_rec_verified_user,
-            defaults={
-                "organization_name": "Local Youth Center",
-                "organization_type": Organization.OrgType.COMMUNITY,
-                "license_number": "WA-COMM-4410",
-                "contact_person": "Elena Marcus",
-                "official_email": "director@localyouth.org",
-                "phone": "+1 (555) 015-8833",
-                "address": "742 Community Way, Central District",
-                "city": "Seattle",
-                "website": "https://localyouthcenter.org",
-                "description": "After-school programs providing safe learning spaces, coding workshops, and nutrition for local teenagers.",
-                "verification_status": Organization.VerificationStatus.VERIFIED,
-                "verified_at": timezone.now()
-            }
-        )
-
-        # Pending Organization
-        org_pending_user, _ = User.objects.get_or_create(
-            email="contact@newhorizon.org",
-            defaults={
-                "name": "New Horizon Relief Shelter",
-                "phone": "+1 (555) 017-9944",
-                "role": User.Role.RECEIVER,
-                "account_type": User.AccountType.ORGANIZATION,
-                "city": "Seattle",
-                "address": "120 Pioneer Square",
-                "is_verified": False,
-            }
-        )
-
-        org_pending_user.set_password("password123")
-        org_pending_user.save()
-
-        Profile.objects.get_or_create(
-            user=org_pending_user
-        )
-
-        Organization.objects.get_or_create(
-            user=org_pending_user,
-            defaults={
-                "organization_name": "New Horizon Relief Shelter",
-                "organization_type": Organization.OrgType.SHELTER,
-                "license_number": "WA-REL-99212",
-                "contact_person": "Robert Hall",
-                "official_email": "contact@newhorizon.org",
-                "phone": "+1 (555) 017-9944",
-                "address": "120 Pioneer Square",
-                "city": "Seattle",
-                "website": "https://newhorizonrelief.org",
-                "description": "Emergency transitional shelter supporting families in temporary housing transitions.",
-                "verification_status": Organization.VerificationStatus.PENDING,
-            }
-        )
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                "Loaded demo users & organizations only."
-            )
-        )
-
-        # 5-8. Demo marketplace donations
-        #
-        # These four clearly-labelled seed records are intentionally kept in
-        # the AVAILABLE state so the public landing page, receiver browse
-        # screen, and admin donation list all have realistic content to show
-        # on a fresh/demo installation.  Each donation has a different donor,
-        # item, category, image, and pickup location.
-        demo_titles = [
-            "Oak Dining Chair - Solid Wood",
-            "Warm Winter Jacket - Like New",
-            "Canvas Travel Backpack - Everyday Carry",
-            "Kids Learning Backpack & Art Set",
-        ]
-
-        removed_count, _ = Donation.objects.filter(
-            title__in=demo_titles
-        ).delete()
-
-        demo_donors = [
-            {
-                "email": "olivia.demo@secondlife.eco",
-                "name": "Olivia Carter",
-                "phone": "+1 (206) 555-0141",
-                "city": "Seattle",
-                "address": "184 Pine Street",
-                "bio": "Sharing quality home items that still have plenty of life left.",
-            },
-            {
-                "email": "ethan.demo@secondlife.eco",
-                "name": "Ethan Brooks",
-                "phone": "+1 (425) 555-0172",
-                "city": "Bellevue",
-                "address": "72 Lake Avenue",
-                "bio": "Giving useful clothing a second life instead of letting it go to waste.",
-            },
-            {
-                "email": "mia.demo@secondlife.eco",
-                "name": "Mia Anderson",
-                "phone": "+1 (253) 555-0133",
-                "city": "Tacoma",
-                "address": "415 Market Street",
-                "bio": "Passing on practical bags and accessories that are still in great condition.",
-            },
-            {
-                "email": "liam.demo@secondlife.eco",
-                "name": "Liam Wilson",
-                "phone": "+1 (425) 555-0184",
-                "city": "Everett",
-                "address": "29 Cedar Avenue",
-                "bio": "Helping families reuse educational and creative items.",
-            },
-        ]
-
-        donors = {}
-        for donor_data in demo_donors:
-            donor, _ = User.objects.get_or_create(
-                email=donor_data["email"],
-                defaults={
-                    "name": donor_data["name"],
-                    "phone": donor_data["phone"],
-                    "role": User.Role.DONOR,
-                    "account_type": User.AccountType.INDIVIDUAL,
-                    "city": donor_data["city"],
-                    "address": donor_data["address"],
-                    "country": "USA",
-                    "is_verified": True,
-                    "is_active": True,
-                },
-            )
-            donor.name = donor_data["name"]
-            donor.phone = donor_data["phone"]
-            donor.role = User.Role.DONOR
-            donor.account_type = User.AccountType.INDIVIDUAL
-            donor.city = donor_data["city"]
-            donor.address = donor_data["address"]
-            donor.is_verified = True
-            donor.is_active = True
-            donor.set_password("password123")
-            donor.save()
-
-            Profile.objects.update_or_create(
-                user=donor,
-                defaults={
-                    "bio": donor_data["bio"],
-                    "pickup_radius": 15,
-                    "handover_preference": "PICKUP",
-                },
-            )
-            donors[donor_data["email"]] = donor
-
-        # Add the two marketplace groups used by the landing-page filters.
-        extra_categories = [
             {
                 "name": "Bags & Accessories",
                 "slug": "bags-accessories",
@@ -423,22 +77,470 @@ class Command(BaseCommand):
                 "description": "Useful children's items, learning materials, and family essentials.",
             },
         ]
-        for cdata in extra_categories:
-            cat, _ = Category.objects.get_or_create(
+
+        categories = {}
+
+        for cdata in categories_data:
+            category, _ = Category.objects.get_or_create(
                 slug=cdata["slug"],
                 defaults=cdata,
             )
-            categories[cdata["slug"]] = cat
+
+            categories[cdata["slug"]] = category
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Loaded {len(categories)} categories."
+            )
+        )
+
+        # ============================================================
+        # 2. ADMIN USER
+        # ============================================================
+
+        admin, _ = User.objects.get_or_create(
+            email="givesthingsasecondlife@gmail.com",
+            defaults={
+                "name": "SecondLife Administration",
+                "phone": "+92 300 0000000",
+                "role": User.Role.ADMIN,
+                "account_type": User.AccountType.INDIVIDUAL,
+                "city": "Lahore",
+                "address": "Gulberg III, Lahore",
+                "country": "Pakistan",
+                "is_staff": True,
+                "is_superuser": True,
+                "is_verified": True,
+                "is_active": True,
+            },
+        )
+
+        admin.name = "SecondLife Administration"
+        admin.phone = "+92 300 0000000"
+        admin.role = User.Role.ADMIN
+        admin.account_type = User.AccountType.INDIVIDUAL
+        admin.city = "Lahore"
+        admin.address = "Gulberg III, Lahore"
+        admin.country = "Pakistan"
+        admin.is_staff = True
+        admin.is_superuser = True
+        admin.is_verified = True
+        admin.is_active = True
+        admin.set_password("Admin@12345")
+        admin.save()
+
+        Profile.objects.update_or_create(
+            user=admin,
+            defaults={
+                "bio": "SecondLife Platform Administration",
+            },
+        )
+
+        # ============================================================
+        # 3. DEMO DONOR USERS
+        # ============================================================
+
+        donor_mamoon, _ = User.objects.get_or_create(
+            email="mamoon@secondlife.eco",
+            defaults={
+                "name": "Mamoon Shahid",
+                "phone": "+92 300 1234567",
+                "role": User.Role.DONOR,
+                "account_type": User.AccountType.INDIVIDUAL,
+                "city": "Lahore",
+                "address": "Johar Town, Lahore",
+                "country": "Pakistan",
+                "is_verified": True,
+                "is_active": True,
+            },
+        )
+
+        donor_mamoon.name = "Mamoon Shahid"
+        donor_mamoon.phone = "+92 300 1234567"
+        donor_mamoon.role = User.Role.DONOR
+        donor_mamoon.account_type = User.AccountType.INDIVIDUAL
+        donor_mamoon.city = "Lahore"
+        donor_mamoon.address = "Johar Town, Lahore"
+        donor_mamoon.country = "Pakistan"
+        donor_mamoon.is_verified = True
+        donor_mamoon.is_active = True
+        donor_mamoon.set_password("password123")
+        donor_mamoon.save()
+
+        Profile.objects.update_or_create(
+            user=donor_mamoon,
+            defaults={
+                "bio": "Passionate about circular economy and sustainable zero-waste living.",
+                "preferred_categories": [
+                    "furniture",
+                    "electronics",
+                    "books",
+                ],
+                "pickup_radius": 15,
+                "handover_preference": "PICKUP",
+            },
+        )
+
+        donor_sarah, _ = User.objects.get_or_create(
+            email="sarah.j@secondlife.eco",
+            defaults={
+                "name": "Sarah Jenkins",
+                "phone": "+92 301 2345678",
+                "role": User.Role.DONOR,
+                "account_type": User.AccountType.INDIVIDUAL,
+                "city": "Islamabad",
+                "address": "F-7, Islamabad",
+                "country": "Pakistan",
+                "is_verified": True,
+                "is_active": True,
+            },
+        )
+
+        donor_sarah.name = "Sarah Jenkins"
+        donor_sarah.phone = "+92 301 2345678"
+        donor_sarah.role = User.Role.DONOR
+        donor_sarah.account_type = User.AccountType.INDIVIDUAL
+        donor_sarah.city = "Islamabad"
+        donor_sarah.address = "F-7, Islamabad"
+        donor_sarah.country = "Pakistan"
+        donor_sarah.is_verified = True
+        donor_sarah.is_active = True
+        donor_sarah.set_password("password123")
+        donor_sarah.save()
+
+        Profile.objects.update_or_create(
+            user=donor_sarah,
+            defaults={
+                "bio": "Downsizing and giving durable quality home items a second life.",
+                "preferred_categories": [
+                    "furniture",
+                    "clothes",
+                ],
+                "pickup_radius": 10,
+                "handover_preference": "PICKUP",
+            },
+        )
+
+        # ============================================================
+        # 4. ORGANIZATION DONOR
+        # ============================================================
+
+        org_donor_user, _ = User.objects.get_or_create(
+            email="contact@greenearth.org",
+            defaults={
+                "name": "Green Earth Foundation",
+                "phone": "+92 302 3456789",
+                "role": User.Role.DONOR,
+                "account_type": User.AccountType.ORGANIZATION,
+                "city": "Lahore",
+                "address": "Gulberg III, Lahore",
+                "country": "Pakistan",
+                "is_verified": True,
+                "is_active": True,
+            },
+        )
+
+        org_donor_user.name = "Green Earth Foundation"
+        org_donor_user.phone = "+92 302 3456789"
+        org_donor_user.role = User.Role.DONOR
+        org_donor_user.account_type = User.AccountType.ORGANIZATION
+        org_donor_user.city = "Lahore"
+        org_donor_user.address = "Gulberg III, Lahore"
+        org_donor_user.country = "Pakistan"
+        org_donor_user.is_verified = True
+        org_donor_user.is_active = True
+        org_donor_user.set_password("password123")
+        org_donor_user.save()
+
+        Profile.objects.get_or_create(
+            user=org_donor_user
+        )
+
+        Organization.objects.update_or_create(
+            user=org_donor_user,
+            defaults={
+                "organization_name": "Green Earth Foundation",
+                "organization_type": Organization.OrgType.FOUNDATION,
+                "license_number": "PK-NGO-88219",
+                "contact_person": "David Vance",
+                "official_email": "contact@greenearth.org",
+                "phone": "+92 302 3456789",
+                "address": "Gulberg III, Lahore",
+                "city": "Lahore",
+                "website": "https://greenearth.org",
+                "description": "Donating refurbished educational computers and library books to communities in need.",
+                "verification_status": Organization.VerificationStatus.VERIFIED,
+                "verified_at": timezone.now(),
+            },
+        )
+
+        # ============================================================
+        # 5. DEMO RECEIVER
+        # ============================================================
+
+        receiver_alex, _ = User.objects.get_or_create(
+            email="alex.rivera@secondlife.eco",
+            defaults={
+                "name": "Alex Rivera",
+                "phone": "+92 303 4567890",
+                "role": User.Role.RECEIVER,
+                "account_type": User.AccountType.INDIVIDUAL,
+                "city": "Lahore",
+                "address": "Model Town, Lahore",
+                "country": "Pakistan",
+                "is_verified": True,
+                "is_active": True,
+            },
+        )
+
+        receiver_alex.name = "Alex Rivera"
+        receiver_alex.phone = "+92 303 4567890"
+        receiver_alex.role = User.Role.RECEIVER
+        receiver_alex.account_type = User.AccountType.INDIVIDUAL
+        receiver_alex.city = "Lahore"
+        receiver_alex.address = "Model Town, Lahore"
+        receiver_alex.country = "Pakistan"
+        receiver_alex.is_verified = True
+        receiver_alex.is_active = True
+        receiver_alex.set_password("password123")
+        receiver_alex.save()
+
+        Profile.objects.update_or_create(
+            user=receiver_alex,
+            defaults={
+                "bio": "Eco-conscious community member looking for useful items for a sustainable home and study space.",
+                "needed_categories": [
+                    "furniture",
+                    "electronics",
+                    "books",
+                ],
+                "pickup_radius": 12,
+                "handover_preference": "EITHER",
+            },
+        )
+
+        # ============================================================
+        # 6. VERIFIED ORGANIZATION RECEIVER
+        # ============================================================
+
+        org_rec_verified_user, _ = User.objects.get_or_create(
+            email="director@localyouth.org",
+            defaults={
+                "name": "Local Youth Center",
+                "phone": "+92 304 5678901",
+                "role": User.Role.RECEIVER,
+                "account_type": User.AccountType.ORGANIZATION,
+                "city": "Rawalpindi",
+                "address": "Saddar, Rawalpindi",
+                "country": "Pakistan",
+                "is_verified": True,
+                "is_active": True,
+            },
+        )
+
+        org_rec_verified_user.name = "Local Youth Center"
+        org_rec_verified_user.phone = "+92 304 5678901"
+        org_rec_verified_user.role = User.Role.RECEIVER
+        org_rec_verified_user.account_type = User.AccountType.ORGANIZATION
+        org_rec_verified_user.city = "Rawalpindi"
+        org_rec_verified_user.address = "Saddar, Rawalpindi"
+        org_rec_verified_user.country = "Pakistan"
+        org_rec_verified_user.is_verified = True
+        org_rec_verified_user.is_active = True
+        org_rec_verified_user.set_password("password123")
+        org_rec_verified_user.save()
+
+        Profile.objects.get_or_create(
+            user=org_rec_verified_user
+        )
+
+        Organization.objects.update_or_create(
+            user=org_rec_verified_user,
+            defaults={
+                "organization_name": "Local Youth Center",
+                "organization_type": Organization.OrgType.COMMUNITY,
+                "license_number": "PK-COMM-4410",
+                "contact_person": "Elena Marcus",
+                "official_email": "director@localyouth.org",
+                "phone": "+92 304 5678901",
+                "address": "Saddar, Rawalpindi",
+                "city": "Rawalpindi",
+                "website": "https://localyouthcenter.org",
+                "description": "Community programs providing safe learning spaces, coding workshops, and educational support for young people.",
+                "verification_status": Organization.VerificationStatus.VERIFIED,
+                "verified_at": timezone.now(),
+            },
+        )
+
+        # ============================================================
+        # 7. PENDING ORGANIZATION RECEIVER
+        # ============================================================
+
+        org_pending_user, _ = User.objects.get_or_create(
+            email="contact@newhorizon.org",
+            defaults={
+                "name": "New Horizon Relief Shelter",
+                "phone": "+92 305 6789012",
+                "role": User.Role.RECEIVER,
+                "account_type": User.AccountType.ORGANIZATION,
+                "city": "Karachi",
+                "address": "Gulshan-e-Iqbal, Karachi",
+                "country": "Pakistan",
+                "is_verified": False,
+                "is_active": True,
+            },
+        )
+
+        org_pending_user.name = "New Horizon Relief Shelter"
+        org_pending_user.phone = "+92 305 6789012"
+        org_pending_user.role = User.Role.RECEIVER
+        org_pending_user.account_type = User.AccountType.ORGANIZATION
+        org_pending_user.city = "Karachi"
+        org_pending_user.address = "Gulshan-e-Iqbal, Karachi"
+        org_pending_user.country = "Pakistan"
+        org_pending_user.is_verified = False
+        org_pending_user.is_active = True
+        org_pending_user.set_password("password123")
+        org_pending_user.save()
+
+        Profile.objects.get_or_create(
+            user=org_pending_user
+        )
+
+        Organization.objects.update_or_create(
+            user=org_pending_user,
+            defaults={
+                "organization_name": "New Horizon Relief Shelter",
+                "organization_type": Organization.OrgType.SHELTER,
+                "license_number": "PK-REL-99212",
+                "contact_person": "Robert Hall",
+                "official_email": "contact@newhorizon.org",
+                "phone": "+92 305 6789012",
+                "address": "Gulshan-e-Iqbal, Karachi",
+                "city": "Karachi",
+                "website": "https://newhorizonrelief.org",
+                "description": "Relief and transitional support organization helping families and individuals in difficult circumstances.",
+                "verification_status": Organization.VerificationStatus.PENDING,
+            },
+        )
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Loaded demo users & organizations only."
+            )
+        )
+
+        # ============================================================
+        # 8. DEMO MARKETPLACE DONATIONS
+        # ============================================================
+
+        demo_titles = [
+            "Oak Dining Chair - Solid Wood",
+            "Warm Winter Jacket - Like New",
+            "Canvas Travel Backpack - Everyday Carry",
+            "Kids Learning Backpack & Art Set",
+        ]
+
+        removed_count, _ = Donation.objects.filter(
+            title__in=demo_titles
+        ).delete()
+
+        # ------------------------------------------------------------
+        # Demo marketplace donors
+        # ------------------------------------------------------------
+
+        demo_donors = [
+            {
+                "email": "olivia.demo@secondlife.eco",
+                "name": "Olivia Khan",
+                "phone": "+92 306 7890123",
+                "city": "Lahore",
+                "address": "Johar Town, Lahore",
+                "bio": "Sharing quality home items that still have plenty of life left.",
+            },
+            {
+                "email": "ahmed.demo@secondlife.eco",
+                "name": "Ahmed Hassan",
+                "phone": "+92 307 8901234",
+                "city": "Islamabad",
+                "address": "F-7, Islamabad",
+                "bio": "Giving useful clothing a second life instead of letting it go to waste.",
+            },
+            {
+                "email": "ayesha.demo@secondlife.eco",
+                "name": "Ayesha Malik",
+                "phone": "+92 308 9012345",
+                "city": "Rawalpindi",
+                "address": "Saddar, Rawalpindi",
+                "bio": "Passing on practical bags and accessories that are still in great condition.",
+            },
+            {
+                "email": "hamza.demo@secondlife.eco",
+                "name": "Hamza Ali",
+                "phone": "+92 309 0123456",
+                "city": "Karachi",
+                "address": "Gulshan-e-Iqbal, Karachi",
+                "bio": "Helping families reuse educational and creative items.",
+            },
+        ]
+
+        donors = {}
+
+        for donor_data in demo_donors:
+            donor, _ = User.objects.get_or_create(
+                email=donor_data["email"],
+                defaults={
+                    "name": donor_data["name"],
+                    "phone": donor_data["phone"],
+                    "role": User.Role.DONOR,
+                    "account_type": User.AccountType.INDIVIDUAL,
+                    "city": donor_data["city"],
+                    "address": donor_data["address"],
+                    "country": "Pakistan",
+                    "is_verified": True,
+                    "is_active": True,
+                },
+            )
+
+            donor.name = donor_data["name"]
+            donor.phone = donor_data["phone"]
+            donor.role = User.Role.DONOR
+            donor.account_type = User.AccountType.INDIVIDUAL
+            donor.city = donor_data["city"]
+            donor.address = donor_data["address"]
+            donor.country = "Pakistan"
+            donor.is_verified = True
+            donor.is_active = True
+            donor.set_password("password123")
+            donor.save()
+
+            Profile.objects.update_or_create(
+                user=donor,
+                defaults={
+                    "bio": donor_data["bio"],
+                    "pickup_radius": 15,
+                    "handover_preference": "PICKUP",
+                },
+            )
+
+            donors[donor_data["email"]] = donor
+
+        # ------------------------------------------------------------
+        # Demo donations
+        # ------------------------------------------------------------
 
         demo_donations = [
             {
                 "title": "Oak Dining Chair - Solid Wood",
-                "description": "Sturdy solid-wood dining chair with a clean finish. Ready for a new home and everyday use.",
+                "description": (
+                    "Sturdy solid-wood dining chair with a clean finish. "
+                    "Ready for a new home and everyday use."
+                ),
                 "condition": Donation.Condition.GOOD,
                 "quantity": 1,
                 "delivery_option": Donation.DeliveryOption.PICKUP,
-                "location": "184 Pine Street, Seattle",
-                "city": "Seattle",
+                "location": "Johar Town, Lahore",
+                "city": "Lahore",
                 "weight": "4.2 kg",
                 "pickup_date": "Flexible",
                 "pickup_time": "10:00 AM - 6:00 PM",
@@ -448,47 +550,56 @@ class Command(BaseCommand):
             },
             {
                 "title": "Warm Winter Jacket - Like New",
-                "description": "Comfortable insulated winter jacket in excellent condition, suitable for cool-weather days.",
+                "description": (
+                    "Comfortable insulated winter jacket in excellent condition, "
+                    "suitable for cool-weather days."
+                ),
                 "condition": Donation.Condition.LIKE_NEW,
                 "quantity": 1,
                 "delivery_option": Donation.DeliveryOption.EITHER,
-                "location": "72 Lake Avenue, Bellevue",
-                "city": "Bellevue",
+                "location": "F-7, Islamabad",
+                "city": "Islamabad",
                 "weight": "1.1 kg",
                 "pickup_date": "This weekend",
                 "pickup_time": "11:00 AM - 5:00 PM",
                 "category": categories["clothes"],
-                "donor": donors["ethan.demo@secondlife.eco"],
+                "donor": donors["ahmed.demo@secondlife.eco"],
                 "image_url": "/images/donations/jacket.jpg",
             },
             {
                 "title": "Canvas Travel Backpack - Everyday Carry",
-                "description": "Durable canvas backpack with roomy compartments for school, work, or everyday travel.",
+                "description": (
+                    "Durable canvas backpack with roomy compartments for school, "
+                    "work, or everyday travel."
+                ),
                 "condition": Donation.Condition.GOOD,
                 "quantity": 1,
                 "delivery_option": Donation.DeliveryOption.PICKUP,
-                "location": "415 Market Street, Tacoma",
-                "city": "Tacoma",
+                "location": "Saddar, Rawalpindi",
+                "city": "Rawalpindi",
                 "weight": "0.9 kg",
                 "pickup_date": "Flexible",
                 "pickup_time": "9:00 AM - 4:00 PM",
                 "category": categories["bags-accessories"],
-                "donor": donors["mia.demo@secondlife.eco"],
+                "donor": donors["ayesha.demo@secondlife.eco"],
                 "image_url": "/images/donations/bags.jpg",
             },
             {
                 "title": "Kids Learning Backpack & Art Set",
-                "description": "A practical children's backpack bundled with a reusable art set for school and creative activities.",
+                "description": (
+                    "A practical children's backpack bundled with a reusable art set "
+                    "for school and creative activities."
+                ),
                 "condition": Donation.Condition.LIKE_NEW,
                 "quantity": 1,
                 "delivery_option": Donation.DeliveryOption.PICKUP,
-                "location": "29 Cedar Avenue, Everett",
-                "city": "Everett",
+                "location": "Gulshan-e-Iqbal, Karachi",
+                "city": "Karachi",
                 "weight": "1.4 kg",
                 "pickup_date": "Next week",
                 "pickup_time": "12:00 PM - 6:00 PM",
                 "category": categories["kids-family"],
-                "donor": donors["liam.demo@secondlife.eco"],
+                "donor": donors["hamza.demo@secondlife.eco"],
                 "image_url": "/images/donations/kids-accessories.jpg",
             },
         ]
@@ -509,11 +620,16 @@ class Command(BaseCommand):
                 pickup_date=data["pickup_date"],
                 pickup_time=data["pickup_time"],
             )
+
             DonationImage.objects.create(
                 donation=donation,
                 image_url=data["image_url"],
                 is_primary=True,
             )
+
+        # ============================================================
+        # 9. CLEAN DEMO NOTIFICATIONS
+        # ============================================================
 
         Notification.objects.filter(
             user__email__in=[
@@ -529,33 +645,48 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Removed {removed_count} old demo donations and created {len(demo_donations)} marketplace demo donations. "
-                "They are visible on the landing page, receiver browse page, and admin donation list."
+                f"Removed {removed_count} old demo donations and created "
+                f"{len(demo_donations)} marketplace demo donations. "
+                "They are visible on the landing page, receiver browse page, "
+                "and admin donation list."
             )
         )
 
-        # 9. Activity Logs
+        # ============================================================
+        # 10. ACTIVITY LOG
+        # ============================================================
+
         ActivityLog.objects.get_or_create(
             user=admin,
             action="SYSTEM_INIT",
             defaults={
-                "description": "SecondLife platform initialized with categories, demo accounts, and chatbot FAQs. User donations are not seeded."
-            }
+                "description": (
+                    "SecondLife platform initialized with categories, "
+                    "demo accounts, marketplace donations, and chatbot FAQs. "
+                    "User donations are not seeded."
+                )
+            },
         )
 
-        # 10. Sample contact message
+        # ============================================================
+        # 11. CONTACT MESSAGE
+        # ============================================================
+
         ContactMessage.objects.get_or_create(
             email="maria.santos@greenpartners.org",
             defaults={
                 "name": "Maria Santos",
                 "subject": "Bulk Donation Logistics Partnership",
-                "message": "We represent a network of local community libraries and would like to coordinate monthly bulk book collections.",
-                "is_resolved": False
-            }
+                "message": (
+                    "We represent a network of local community libraries "
+                    "and would like to coordinate monthly bulk book collections."
+                ),
+                "is_resolved": False,
+            },
         )
 
         # ============================================================
-        # 11. CHATBOT FAQs
+        # 12. CHATBOT FAQs
         # ============================================================
 
         chatbot_faqs = [
@@ -565,7 +696,7 @@ class Command(BaseCommand):
                     "SecondLife was developed by:\n\n"
                     "👨‍💻 Mamoon Shahid\n"
                     "👨‍💻 Habib Ahmad Siddiqui\n"
-                    "👨‍💻 Maaj Ahmad\n\n"
+                    "👨‍💻 Amaaj Ahmad\n\n"
                     "Together, the team developed SecondLife — Give Things a Second Life, "
                     "a platform designed to connect donors with people and organizations "
                     "who need useful items."
@@ -573,12 +704,11 @@ class Command(BaseCommand):
                 "keywords": (
                     "developer, developers, developed by, created by, creator, "
                     "who made, who created, development team, team, mamoon, "
-                    "habib, maaj"
+                    "habib, amaaj"
                 ),
                 "category": "team",
                 "priority": 100,
             },
-
             {
                 "question": "What is SecondLife?",
                 "answer": (
@@ -593,7 +723,6 @@ class Command(BaseCommand):
                 "category": "general",
                 "priority": 90,
             },
-
             {
                 "question": "What is the purpose of SecondLife?",
                 "answer": (
@@ -608,7 +737,6 @@ class Command(BaseCommand):
                 "category": "general",
                 "priority": 80,
             },
-
             {
                 "question": "How does SecondLife work?",
                 "answer": (
@@ -623,7 +751,6 @@ class Command(BaseCommand):
                 "category": "general",
                 "priority": 80,
             },
-
             {
                 "question": "How can I donate an item?",
                 "answer": (
@@ -639,7 +766,6 @@ class Command(BaseCommand):
                 "category": "donations",
                 "priority": 80,
             },
-
             {
                 "question": "What can I donate?",
                 "answer": (
@@ -654,7 +780,6 @@ class Command(BaseCommand):
                 "category": "donations",
                 "priority": 75,
             },
-
             {
                 "question": "How can I request an item?",
                 "answer": (
@@ -669,7 +794,6 @@ class Command(BaseCommand):
                 "category": "requests",
                 "priority": 80,
             },
-
             {
                 "question": "Who can receive donations?",
                 "answer": (
@@ -684,7 +808,6 @@ class Command(BaseCommand):
                 "category": "requests",
                 "priority": 70,
             },
-
             {
                 "question": "Can organizations use SecondLife?",
                 "answer": (
@@ -699,7 +822,6 @@ class Command(BaseCommand):
                 "category": "organizations",
                 "priority": 75,
             },
-
             {
                 "question": "How does matching work?",
                 "answer": (
@@ -715,7 +837,6 @@ class Command(BaseCommand):
                 "category": "matching",
                 "priority": 70,
             },
-
             {
                 "question": "Is SecondLife free?",
                 "answer": (
@@ -729,7 +850,6 @@ class Command(BaseCommand):
                 "category": "general",
                 "priority": 60,
             },
-
             {
                 "question": "Why should I donate?",
                 "answer": (
@@ -744,12 +864,12 @@ class Command(BaseCommand):
                 "category": "donations",
                 "priority": 65,
             },
-
             {
                 "question": "What donation categories are available?",
                 "answer": (
                     "SecondLife currently supports categories such as Clothes, "
-                    "Books, Electronics, Furniture, Food, and Other useful items."
+                    "Books, Electronics, Furniture, Food, Bags & Accessories, "
+                    "Kids & Family, and Other useful items."
                 ),
                 "keywords": (
                     "categories, donation categories, item categories, "
@@ -758,7 +878,6 @@ class Command(BaseCommand):
                 "category": "donations",
                 "priority": 65,
             },
-
             {
                 "question": "Can I donate electronics?",
                 "answer": (
@@ -773,7 +892,6 @@ class Command(BaseCommand):
                 "category": "donations",
                 "priority": 60,
             },
-
             {
                 "question": "Can I donate clothes?",
                 "answer": (
@@ -787,7 +905,6 @@ class Command(BaseCommand):
                 "category": "donations",
                 "priority": 60,
             },
-
             {
                 "question": "How does delivery work?",
                 "answer": (
@@ -802,7 +919,6 @@ class Command(BaseCommand):
                 "category": "delivery",
                 "priority": 65,
             },
-
             {
                 "question": "Is my information safe?",
                 "answer": (
@@ -817,7 +933,6 @@ class Command(BaseCommand):
                 "category": "safety",
                 "priority": 65,
             },
-
             {
                 "question": "How do I create an account?",
                 "answer": (
@@ -832,7 +947,6 @@ class Command(BaseCommand):
                 "category": "accounts",
                 "priority": 60,
             },
-
             {
                 "question": "What is the environmental benefit of SecondLife?",
                 "answer": (
@@ -866,6 +980,10 @@ class Command(BaseCommand):
                 f"Loaded {len(chatbot_faqs)} chatbot FAQs."
             )
         )
+
+        # ============================================================
+        # FINISHED
+        # ============================================================
 
         self.stdout.write(
             self.style.SUCCESS(
