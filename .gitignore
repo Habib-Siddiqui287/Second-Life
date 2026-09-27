@@ -1,0 +1,20 @@
+# Generated/local files
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+dist/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# User uploaded media
+media/profiles/
+# Runtime uploads (do not commit user-generated media)
+media/*
+!media/.gitkeep
+
+.env
