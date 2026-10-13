@@ -1495,22 +1495,36 @@ class ChatbotAssistantView(APIView):
 
     def post(self, request):
         try:
-            data = request.data if isinstance(request.data, dict) else {}
-            user_message = str(
-                data.get("message") or data.get("prompt") or data.get("query") or ""
-            ).strip()
+            return self._process_message(request)
+        except Exception:
+            return Response(
+                {
+                    "reply": self.DEFAULT_RESPONSE,
+                    "suggestions": self.DEFAULT_SUGGESTIONS,
+                    "category": "general",
+                    "matched_question": None,
+                    "confidence_score": 0,
+                },
+                status=status.HTTP_200_OK
+            )
 
-            # -----------------------------------------------------
-            # Empty message
-            # -----------------------------------------------------
+    def _process_message(self, request):
+        data = request.data if isinstance(request.data, dict) else {}
+        user_message = str(
+            data.get("message") or data.get("prompt") or data.get("query") or ""
+        ).strip()
 
-            if not user_message:
-                return Response(
-                    {
-                        "error": "Message cannot be empty."
-                    },
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+        # -----------------------------------------------------
+        # Empty message
+        # -----------------------------------------------------
+
+        if not user_message:
+            return Response(
+                {
+                    "error": "Message cannot be empty."
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         # =====================================================
         # DATABASE-DRIVEN INTENTS
@@ -1659,14 +1673,3 @@ class ChatbotAssistantView(APIView):
 
             status=status.HTTP_200_OK
         )
-        except Exception:
-            return Response(
-                {
-                    "reply": self.DEFAULT_RESPONSE,
-                    "suggestions": self.DEFAULT_SUGGESTIONS,
-                    "category": "general",
-                    "matched_question": None,
-                    "confidence_score": 0,
-                },
-                status=status.HTTP_200_OK
-            )
