@@ -22,9 +22,12 @@ DEBUG = os.environ.get(
 
 ALLOWED_HOSTS = [
     host.strip()
-    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    for host in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,.onrender.com').split(',')
     if host.strip()
 ]
+
+if '.onrender.com' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.onrender.com')
 
 if DEBUG and '*' not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.extend(['localhost', '127.0.0.1'])
