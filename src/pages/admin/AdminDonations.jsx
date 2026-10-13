@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/savedItemService';
 import StatusBadge from '../../components/StatusBadge';
 import ConditionBadge from '../../components/ConditionBadge';
@@ -91,7 +91,11 @@ export default function AdminDonations() {
                 {donations.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-4 px-6 font-bold text-slate-900 flex items-center gap-3">
-                      <img src={d.primary_image} alt="" className="w-10 h-10 rounded-xl object-cover bg-slate-100" />
+                      <img src={d.primary_image}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/donations/furniture.jpg';
+                    }} alt="" className="w-10 h-10 rounded-xl object-cover bg-slate-100" />
                       <span className="truncate max-w-[200px]">{d.title}</span>
                     </td>
                     <td className="py-4 px-6 font-semibold">

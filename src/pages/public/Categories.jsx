@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Filter, Bookmark, Eye, CheckCircle2 } from 'lucide-react';
 import { donationService } from '../../services/donationService';
@@ -84,10 +84,10 @@ export default function Categories() {
       </div>
 
       {/* Category Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2">
         <button
           onClick={() => handleCategoryChange('all')}
-          className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+          className={`shrink-0 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
             selectedCategory === 'all'
               ? 'bg-[#15803D] text-white shadow-sm'
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
@@ -99,7 +99,7 @@ export default function Categories() {
           <button
             key={c.id}
             onClick={() => handleCategoryChange(c.slug)}
-            className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+            className={`shrink-0 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCategory.toLowerCase() === c.slug.toLowerCase()
                 ? 'bg-[#15803D] text-white shadow-sm'
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
@@ -111,13 +111,13 @@ export default function Categories() {
       </div>
 
       {/* Condition filters */}
-      <div className="flex items-center gap-2 text-xs font-semibold text-slate-500">
-        <span>Condition:</span>
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 text-xs font-semibold text-slate-500 whitespace-nowrap">
+        <span className="shrink-0">Condition:</span>
         {['all', 'NEW', 'LIKE_NEW', 'GOOD', 'FAIR'].map((cond) => (
           <button
             key={cond}
             onClick={() => handleConditionChange(cond)}
-            className={`px-3 py-1 rounded-xl text-[11px] transition-colors ${
+            className={`shrink-0 px-3 py-1 rounded-xl text-[11px] transition-colors ${
               selectedCondition === cond
                 ? 'bg-slate-800 text-white'
                 : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
@@ -144,7 +144,7 @@ export default function Categories() {
           }}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {donations.map((item) => (
             <div
               key={item.id}
@@ -165,7 +165,7 @@ export default function Categories() {
               </div>
 
               {/* Card Body */}
-              <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <ConditionBadge condition={item.condition} />

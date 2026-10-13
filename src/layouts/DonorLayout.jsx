@@ -66,13 +66,23 @@ export default function DonorLayout() {
               <Bell className="w-5 h-5 sm:w-6 sm:h-6" />
               <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-emerald-600 rounded-full border-2 border-white" />
             </button>
-            <Link to="/donor/settings" className="w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-[#15803D] text-white flex items-center justify-center font-extrabold text-xs sm:text-sm uppercase shrink-0" aria-label="Profile Settings">
-              {profileImage ? <img src={profileImage} alt={user?.name || 'Profile'} className="w-full h-full object-cover" /> : initials}
+            <Link to="/donor/settings" className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-[#15803D] text-white flex items-center justify-center font-extrabold text-xs sm:text-sm uppercase shrink-0" aria-label="Profile Settings">
+              {profileImage ? (
+                <>
+                  <span className="absolute inset-0 flex items-center justify-center">{initials}</span>
+                  <img
+                    src={profileImage}
+                    alt={user?.name || 'Profile'}
+                    className="relative w-full h-full object-cover"
+                    onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                  />
+                </>
+              ) : initials}
             </Link>
           </div>
         </header>
 
-        <main className="flex-1 min-w-0 p-3 sm:p-5 lg:p-6 overflow-x-hidden">
+        <main className="flex-1 min-w-0 p-3 sm:p-5 lg:p-6 pb-20 sm:pb-8 overflow-x-hidden">
           <div className="w-full min-w-0 max-w-[1600px] mx-auto">
             <Outlet />
           </div>

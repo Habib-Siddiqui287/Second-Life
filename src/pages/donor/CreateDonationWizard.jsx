@@ -125,9 +125,9 @@ export default function CreateDonationWizard() {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6 pb-24 sm:pb-12">
       {/* Step Indicator */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
+      <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
         <div className="flex items-center justify-between">
           {[
             { s: 1, label: 'Basic Info' },
@@ -136,9 +136,9 @@ export default function CreateDonationWizard() {
             { s: 4, label: 'Photos' },
             { s: 5, label: 'Review & Publish' },
           ].map((item) => (
-            <div key={item.s} className="flex items-center gap-2">
+            <div key={item.s} className="flex items-center gap-1.5 sm:gap-2">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs ${
+                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs ${
                   step === item.s
                     ? 'bg-[#15803D] text-white ring-4 ring-emerald-100'
                     : step > item.s
@@ -146,7 +146,7 @@ export default function CreateDonationWizard() {
                     : 'bg-slate-100 text-slate-400'
                 }`}
               >
-                {step > item.s ? <CheckCircle2 className="w-4 h-4" /> : item.s}
+                {step > item.s ? <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : item.s}
               </div>
               <span className="text-xs font-bold text-slate-700 hidden sm:inline">
                 {item.label}
@@ -158,7 +158,7 @@ export default function CreateDonationWizard() {
 
       {/* STEP 1: Basic Information */}
       {step === 1 && (
-        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-5">
+        <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-5">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900">Step 1: Item Overview</h2>
             <p className="text-xs text-slate-500 mt-1">What item are you giving a second life today?</p>
@@ -204,7 +204,7 @@ export default function CreateDonationWizard() {
 
       {/* STEP 2: Category & Condition */}
       {step === 2 && (
-        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-6">
+        <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-6">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900">Step 2: Category & Condition</h2>
             <p className="text-xs text-slate-500 mt-1">Help receivers discover and verify your item.</p>
@@ -251,7 +251,7 @@ export default function CreateDonationWizard() {
             </div>
           </div>
 
-          <div className="flex justify-between pt-4">
+          <div className="flex items-center justify-between gap-3 pt-4">
             <button
               type="button"
               onClick={() => setStep(1)}
@@ -273,13 +273,13 @@ export default function CreateDonationWizard() {
 
       {/* STEP 3: Quantity & Location */}
       {step === 3 && (
-        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-6">
+        <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-6">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900">Step 3: Location & Handover</h2>
             <p className="text-xs text-slate-500 mt-1">Specify how this item can be exchanged safely.</p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">Quantity</label>
               <input
@@ -304,7 +304,7 @@ export default function CreateDonationWizard() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">City</label>
               <input
@@ -334,7 +334,7 @@ export default function CreateDonationWizard() {
             <div><label className="block text-xs font-bold text-slate-700 mb-1.5">Pickup Time</label><input type="time" value={form.pickup_time} onChange={e=>setForm({...form,pickup_time:e.target.value})} className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs"/></div>
           </div>
           <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4"><div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><p className="text-xs font-extrabold text-slate-900">Pickup location</p><p className="text-[11px] text-slate-500">Use your live device location for the exact handover point.</p></div><button type="button" onClick={useLivePickupLocation} className="px-4 py-2 bg-[#15803D] text-white rounded-xl text-xs font-bold">Use My Live Location</button></div>{form.pickup_latitude && <p className="mt-2 text-[11px] font-semibold text-emerald-800">Selected: {form.pickup_latitude}, {form.pickup_longitude}</p>}</div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 mb-1.5">Dimensions (Optional)</label>
               <input
@@ -364,7 +364,7 @@ export default function CreateDonationWizard() {
             </div>
           </div>
 
-          <div className="flex justify-between pt-4">
+          <div className="flex items-center justify-between gap-3 pt-4">
             <button
               type="button"
               onClick={() => setStep(2)}
@@ -386,14 +386,14 @@ export default function CreateDonationWizard() {
 
       {/* STEP 4: Photos */}
       {step === 4 && (
-        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-6">
+        <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-6">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900">Step 4: Upload Item Photos</h2>
             <p className="text-xs text-slate-500 mt-1">Clear photos help recipients verify condition quickly.</p>
           </div>
 
           {/* Upload Drop Area */}
-          <div className="border-2 border-dashed border-slate-200 rounded-3xl p-8 text-center bg-slate-50/50 hover:bg-slate-50 transition-colors">
+          <div className="border-2 border-dashed border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-center bg-slate-50/50 hover:bg-slate-50 transition-colors">
             <Upload className="w-10 h-10 text-[#15803D] mx-auto mb-3" />
             <h4 className="font-bold text-sm text-slate-800">Upload item images</h4>
             <p className="text-[11px] text-slate-400 mt-1 mb-4">
@@ -418,7 +418,7 @@ export default function CreateDonationWizard() {
               <span className="block text-xs font-bold text-slate-700 mb-2">Uploaded Images:</span>
               <div className="flex flex-wrap gap-3">
                 {form.image_urls.map((url, index) => (
-                  <div key={index} className="relative w-24 h-24 rounded-2xl overflow-hidden border border-slate-200">
+                  <div key={index} className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border border-slate-200">
                     <img src={url} alt="" className="w-full h-full object-cover" />
                     <button
                       type="button"
@@ -433,7 +433,7 @@ export default function CreateDonationWizard() {
             </div>
           )}
 
-          <div className="flex justify-between pt-4">
+          <div className="flex items-center justify-between gap-3 pt-4">
             <button
               type="button"
               onClick={() => setStep(3)}
@@ -455,26 +455,26 @@ export default function CreateDonationWizard() {
 
       {/* STEP 5: Review & Publish */}
       {step === 5 && (
-        <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-6">
+        <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-6">
           <div>
             <h2 className="text-xl font-extrabold text-slate-900">Step 5: Review Your Donation</h2>
             <p className="text-xs text-slate-500 mt-1">Please confirm details before publishing to SecondLife.</p>
           </div>
 
-          <div className="bg-slate-50 rounded-2xl p-5 space-y-3 text-xs">
-            <div className="flex justify-between border-b border-slate-200/60 pb-2">
+          <div className="bg-slate-50 rounded-2xl p-4 sm:p-5 space-y-3 text-xs">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-slate-200/60 pb-2">
               <span className="text-slate-500 font-bold">Item Title</span>
               <span className="font-extrabold text-slate-900">{form.title}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-200/60 pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-slate-200/60 pb-2">
               <span className="text-slate-500 font-bold">Condition</span>
               <ConditionBadge condition={form.condition} />
             </div>
-            <div className="flex justify-between border-b border-slate-200/60 pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-slate-200/60 pb-2">
               <span className="text-slate-500 font-bold">Location</span>
               <span className="font-semibold text-slate-800">{form.location}</span>
             </div>
-            <div className="flex justify-between border-b border-slate-200/60 pb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 border-b border-slate-200/60 pb-2">
               <span className="text-slate-500 font-bold">Handover Option</span>
               <span className="font-semibold text-slate-800">{form.delivery_option}</span>
             </div>
@@ -484,7 +484,7 @@ export default function CreateDonationWizard() {
             </div>
           </div>
 
-          <div className="flex justify-between pt-4">
+          <div className="flex items-center justify-between gap-3 pt-4">
             <button
               type="button"
               onClick={() => setStep(4)}
@@ -496,7 +496,7 @@ export default function CreateDonationWizard() {
               type="button"
               disabled={loading}
               onClick={handlePublish}
-              className="px-8 py-3 bg-[#15803D] hover:bg-[#0F5D28] text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-2"
+              className="px-6 sm:px-8 py-3 bg-[#15803D] hover:bg-[#0F5D28] text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-2"
             >
               {loading ? 'Publishing...' : 'Publish Donation Now'}
               <Sparkles className="w-4 h-4" />
@@ -507,7 +507,7 @@ export default function CreateDonationWizard() {
 
       {/* STEP 6: Confirmation Screen */}
       {step === 6 && (
-        <div className="bg-white rounded-3xl p-10 border border-slate-100 shadow-soft text-center space-y-6">
+        <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-soft text-center space-y-6">
           <div className="w-16 h-16 rounded-full bg-emerald-100 text-[#15803D] flex items-center justify-center mx-auto shadow-sm">
             <CheckCircle2 className="w-10 h-10" />
           </div>
@@ -518,16 +518,16 @@ export default function CreateDonationWizard() {
             </p>
           </div>
 
-          <div className="flex justify-center gap-4 pt-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 pt-4">
             <button
               onClick={() => navigate('/donor/donations')}
-              className="px-6 py-3 bg-[#15803D] text-white rounded-xl text-xs font-bold shadow-sm hover:bg-[#0F5D28]"
+              className="w-full sm:w-auto px-6 py-3 bg-[#15803D] text-white rounded-xl text-xs font-bold shadow-sm hover:bg-[#0F5D28]"
             >
               View My Donations
             </button>
             <button
               onClick={() => navigate('/donor')}
-              className="px-6 py-3 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50"
+              className="w-full sm:w-auto px-6 py-3 border border-slate-200 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50"
             >
               Back to Dashboard
             </button>

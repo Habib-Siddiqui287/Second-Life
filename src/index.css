@@ -89,3 +89,43 @@ button, a, input, textarea, select {
     overflow-x: hidden;
   }
 }
+
+
+/* Utility to hide scrollbar while preserving touch scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ============================================================
+   MOBILE LAYOUT SAFETY
+   Keep dashboard controls, cards and form fields inside the
+   viewport without changing desktop sizing.
+   ============================================================ */
+@media (max-width: 767px) {
+  button,
+  a {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+  }
+
+  input,
+  textarea,
+  select {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  table {
+    min-width: 640px;
+  }
+}

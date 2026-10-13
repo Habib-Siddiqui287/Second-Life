@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { requestService } from '../../services/requestService';
 import { useToast } from '../../context/ToastContext';
@@ -62,12 +62,12 @@ export default function MyRequests() {
       </div>
 
       {/* Tabs (Matches Design Image 14) */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+      <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
         {['ALL', 'PENDING', 'APPROVED', 'COMPLETED', 'CANCELLED'].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+            className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
               activeTab === tab
                 ? 'bg-[#15803D] text-white shadow-xs'
                 : 'text-slate-600 hover:bg-slate-100'
@@ -90,7 +90,7 @@ export default function MyRequests() {
       ) : (
         <div className="bg-white rounded-3xl border border-slate-100 shadow-soft overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full min-w-[620px] text-left text-xs">
               <thead className="bg-slate-50/75 text-slate-500 uppercase tracking-wider text-[10px] font-bold">
                 <tr>
                   <th className="py-3.5 px-6">Item Details</th>

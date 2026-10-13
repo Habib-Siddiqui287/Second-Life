@@ -31,6 +31,11 @@ export const authService = {
     return res.data;
   },
 
+  async deleteAccount() {
+    const res = await api.delete('/auth/me/delete/');
+    return res.data;
+  },
+
   async updateProfile(data) {
     const res = await api.patch('/auth/me/', data);
     return res.data;

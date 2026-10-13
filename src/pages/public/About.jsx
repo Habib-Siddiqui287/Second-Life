@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { ShieldCheck, Recycle, Heart, Users, CheckCircle2 } from 'lucide-react';
 
 export default function About() {
@@ -10,23 +10,23 @@ export default function About() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10 sm:space-y-16">
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <span className="text-xs font-extrabold tracking-widest text-[#15803D] uppercase">
           OUR STORY & PHILOSOPHY
         </span>
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           Giving Useful Things a Second Life.
         </h1>
-        <p className="text-base text-slate-600 leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
           SecondLife was founded on a simple conviction: good things shouldn't go to waste when communities right around us can put them to immediate, life-changing use.
         </p>
       </div>
 
       {/* Grid of Values */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {values.map((v, i) => (
-          <div key={i} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft space-y-3">
+          <div key={i} className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-soft space-y-3">
             <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-[#15803D] flex items-center justify-center font-extrabold text-sm">
               0{i + 1}
             </div>
@@ -37,7 +37,7 @@ export default function About() {
       </div>
 
       {/* Impact & Mission Banner */}
-      <div className="bg-emerald-50 rounded-3xl p-8 sm:p-12 border border-emerald-100/80 flex flex-col md:flex-row items-center gap-8">
+      <div className="bg-emerald-50 rounded-3xl p-6 sm:p-10 md:p-12 border border-emerald-100/80 flex flex-col md:flex-row items-center gap-6 sm:gap-8">
         <div className="flex-1 space-y-4">
           <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
             Circular Economy in Action

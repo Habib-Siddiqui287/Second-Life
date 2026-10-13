@@ -153,6 +153,17 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  const deleteAccount = async () => {
+    await authService.deleteAccount();
+
+    localStorage.removeItem('secondlife_token');
+    localStorage.removeItem('secondlife_refresh_token');
+    localStorage.removeItem('secondlife_user');
+
+    setUser(null);
+    window.location.replace('/');
+  };
+
   const logout = () => {
     // Clear every client-side authentication artifact before navigation.
     localStorage.removeItem('secondlife_token');
@@ -189,6 +200,7 @@ export const AuthProvider = ({ children }) => {
         resendRegistrationOTP,
 
         logout,
+        deleteAccount,
         updateUser,
       }}
     >

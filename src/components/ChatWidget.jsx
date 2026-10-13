@@ -329,7 +329,7 @@ export default function ChatWidget() {
         <div
           className="
             absolute
-            bottom-[68px]
+            bottom-[58px] sm:bottom-[68px]
             right-0
             w-[360px]
             max-w-[calc(100vw-24px)]
@@ -570,7 +570,7 @@ export default function ChatWidget() {
 
                 </div>
 
-                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
+                <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
 
                   {suggestions
                     .slice(0, 5)
@@ -696,25 +696,29 @@ export default function ChatWidget() {
             : 'Open SecondLife AI'
         }
         className="
-          h-14
-          px-4
-          sm:px-5
+          relative
+          w-12
+          h-12
+          sm:w-auto
+          sm:h-12
+          p-0
+          sm:px-4
           rounded-full
           bg-[#087A3F]
           text-white
           shadow-lg
           hover:bg-[#066832]
-          hover:scale-[1.02]
+          hover:scale-105
           active:scale-95
           transition-all
           flex
           items-center
-          gap-2
-          sm:gap-3
+          justify-center
+          sm:gap-2.5
         "
       >
 
-        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
 
           {open ? (
             <X className="w-4 h-4" />
@@ -724,11 +728,14 @@ export default function ChatWidget() {
 
         </div>
 
-        <span className="font-bold text-sm whitespace-nowrap">
+        {/* Compact online indicator for mobile */}
+        <span className="sm:hidden absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 ring-2 ring-[#087A3F]" />
+
+        <span className="hidden sm:inline font-bold text-sm whitespace-nowrap">
           SecondLife AI
         </span>
 
-        <span className="w-2 h-2 rounded-full bg-emerald-300 shrink-0" />
+        <span className="hidden sm:inline w-2 h-2 rounded-full bg-emerald-300 shrink-0" />
 
       </button>
 

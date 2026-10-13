@@ -316,6 +316,16 @@ const Register = () => {
       return;
     }
 
+    if (name.length < 10 || name.length > 50) {
+      showToast('Name must be between 10 and 50 characters.');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9\s]+$/.test(name)) {
+      showToast('Name cannot contain special characters. Only letters, numbers, and spaces are allowed.');
+      return;
+    }
+
     if (!email) {
       showToast('Please enter your email.');
       return;
@@ -1169,9 +1179,14 @@ const Register = () => {
                   <div className="grid sm:grid-cols-2 gap-5">
                     {/* Name */}
                     <div>
-                      <label className="block text-sm font-bold text-slate-700 mb-2">
-                        Full name
-                      </label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-bold text-slate-700">
+                          Full name
+                        </label>
+                        <span className="text-[11px] font-medium text-slate-400">
+                          10–50 chars, no special characters
+                        </span>
+                      </div>
 
                       <div className="relative">
                         <User
@@ -1184,7 +1199,9 @@ const Register = () => {
                           name="name"
                           value={form.name}
                           onChange={handleChange}
-                          placeholder="Your full name"
+                          minLength={10}
+                          maxLength={50}
+                          placeholder="Your full name (10–50 chars)"
                           autoComplete="name"
                           className={inputWithIconClass}
                         />

@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { ShieldCheck, Building2, User } from 'lucide-react';
 
 export default function UserAvatar({ name = 'User', role = 'DONOR', accountType = 'INDIVIDUAL', isVerified = false, size = 'md', image = '' }) {
@@ -30,7 +30,14 @@ export default function UserAvatar({ name = 'User', role = 'DONOR', accountType 
         className={`${sizeStyles[size] || sizeStyles.md} ${bgStyles} rounded-2xl flex items-center justify-center font-extrabold shadow-sm tracking-wider overflow-hidden`}
       >
         {image ? (
-          <img src={image} alt={name} className="w-full h-full object-cover" />
+          <img
+            src={image}
+            alt={name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
         ) : accountType === 'ORGANIZATION' ? (
           <Building2 className={size === 'xl' ? 'w-10 h-10' : size === 'lg' ? 'w-7 h-7' : 'w-4 h-4'} />
         ) : (

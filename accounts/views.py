@@ -624,6 +624,36 @@ class MeView(APIView):
 
 
 # ============================================================
+# DELETE CURRENT ACCOUNT
+# ============================================================
+
+class DeleteAccountView(APIView):
+    permission_classes = [
+        permissions.IsAuthenticated
+    ]
+
+    def delete(self, request):
+        # Self-service deletion is intentionally limited to donor and
+        # receiver accounts. Admin accounts must remain protected.
+        if request.user.role not in (
+            User.Role.DONOR,
+            User.Role.RECEIVER,
+        ):
+            return Response(
+                {'error': 'This account cannot be deleted from the application.'},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        user = request.user
+        user.delete()
+
+        return Response(
+            {'message': 'Your account has been permanently deleted.'},
+            status=status.HTTP_200_OK,
+        )
+
+
+# ============================================================
 # PROFILE IMAGE UPLOAD
 # ============================================================
 

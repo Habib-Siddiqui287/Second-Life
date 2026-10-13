@@ -94,13 +94,13 @@ export default function BrowseDonations() {
       </div>
 
       {/* Category Pills (Matches Design Image 12) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
         <button
           onClick={() => {
             searchParams.delete('category');
             setSearchParams(searchParams);
           }}
-          className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+          className={`shrink-0 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
             selectedCategory === 'all'
               ? 'bg-[#15803D] text-white shadow-xs'
               : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
@@ -115,7 +115,7 @@ export default function BrowseDonations() {
               searchParams.set('category', c.slug);
               setSearchParams(searchParams);
             }}
-            className={`px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
+            className={`shrink-0 px-4 py-2 rounded-2xl text-xs font-bold whitespace-nowrap transition-all ${
               selectedCategory.toLowerCase() === c.slug.toLowerCase()
                 ? 'bg-[#15803D] text-white shadow-xs'
                 : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200/80'
@@ -142,7 +142,7 @@ export default function BrowseDonations() {
           }}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
           {donations.map((item) => (
             <div
               key={item.id}
@@ -153,6 +153,10 @@ export default function BrowseDonations() {
                 <div className="relative aspect-[4/3] bg-slate-50 overflow-hidden">
                   <img
                     src={item.primary_image}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/donations/furniture.jpg';
+                    }}
                     alt={item.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
@@ -187,7 +191,7 @@ export default function BrowseDonations() {
                 </div>
 
                 {/* Content */}
-                <div className="p-5 space-y-2">
+                <div className="p-4 sm:p-5 space-y-2">
                   <div className="flex items-center justify-between gap-1">
                     <ConditionBadge condition={item.condition} />
                     <span className="text-[11px] font-medium text-slate-400 truncate">
@@ -204,7 +208,7 @@ export default function BrowseDonations() {
                 </div>
               </div>
 
-              <div className="p-5 pt-0 border-t border-slate-50 flex items-center justify-between mt-3">
+              <div className="p-4 sm:p-5 pt-0 border-t border-slate-50 flex items-center justify-between mt-3">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="w-6 h-6 rounded-full bg-emerald-100 text-[#15803D] font-extrabold text-[9px] flex items-center justify-center shrink-0">
                     {item.donor_initials}

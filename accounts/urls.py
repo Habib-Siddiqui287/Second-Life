@@ -1,4 +1,4 @@
-﻿from django.urls import path
+from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from accounts.views import (
@@ -7,6 +7,7 @@ from accounts.views import (
     VerifyRegistrationOTPView,
     ResendRegistrationOTPView,
     MeView,
+    DeleteAccountView,
     ProfileImageUploadView,
     ChangePasswordView,
     ForgotPasswordView,
@@ -53,6 +54,12 @@ urlpatterns = [
         'auth/me/',
         MeView.as_view(),
         name='current_user'
+    ),
+
+    path(
+        'auth/me/delete/',
+        DeleteAccountView.as_view(),
+        name='delete_current_account'
     ),
 
     path(

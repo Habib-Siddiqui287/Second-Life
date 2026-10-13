@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Package, RefreshCw, Truck, Sparkles, CheckCircle, ShieldCheck, Heart, ArrowRight } from 'lucide-react';
 
@@ -31,24 +31,24 @@ export default function HowItWorks() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10 sm:space-y-16">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-4">
         <span className="text-xs font-extrabold tracking-widest text-[#15803D] uppercase">
           HOW SECONDLIFE WORKS
         </span>
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           From Something Unused to Something Meaningful.
         </h1>
-        <p className="text-base text-slate-600 leading-relaxed">
+        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
           Giving a second life to quality goods should be simple, transparent, and rewarding. Here is how our circular exchange platform operates from start to finish.
         </p>
       </div>
 
       {/* 4 Step Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
         {steps.map((s) => (
-          <div key={s.num} className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-4">
+          <div key={s.num} className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-3xl font-extrabold text-[#15803D]">{s.num}</span>
               <span className="px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-bold rounded-full">
@@ -70,7 +70,7 @@ export default function HowItWorks() {
       </div>
 
       {/* Safety & Trust */}
-      <div className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-100 shadow-soft">
+      <div className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-soft">
         <div className="max-w-2xl mx-auto text-center space-y-4">
           <ShieldCheck className="w-10 h-10 text-[#15803D] mx-auto" />
           <h2 className="text-2xl font-extrabold text-slate-900">Safety & Trust First</h2>

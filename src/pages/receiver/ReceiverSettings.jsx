@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
 import { useToast } from '../../context/ToastContext';
@@ -55,6 +55,23 @@ export default function ReceiverSettings() {
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
+
+    const name = (profileForm.name || '').trim();
+
+    if (!name) {
+      showToast('Please enter your name.', 'error');
+      return;
+    }
+
+    if (name.length < 10 || name.length > 50) {
+      showToast('Name must be between 10 and 50 characters.', 'error');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9\s]+$/.test(name)) {
+      showToast('Name cannot contain special characters. Only letters, numbers, and spaces are allowed.', 'error');
+      return;
+    }
 
     setLoading(true);
 
@@ -164,7 +181,7 @@ export default function ReceiverSettings() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6 pb-24 sm:pb-12">
       <div>
         <h1 className="text-2xl font-extrabold text-slate-900">
           Account Settings
@@ -218,7 +235,7 @@ export default function ReceiverSettings() {
         </div>
 
         {/* RIGHT CONTENT */}
-        <div className="md:col-span-8 bg-white rounded-3xl p-8 border border-slate-100 shadow-soft">
+        <div className="md:col-span-8 bg-white rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-100 shadow-soft">
 
           {/* PROFILE */}
           {activeTab === 'profile' && (
@@ -231,7 +248,7 @@ export default function ReceiverSettings() {
               </h3>
 
               {/* PROFILE IMAGE */}
-              <div className="flex items-center gap-5 py-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-5 py-3">
                 <div className="relative">
                   <div className="w-20 h-20 rounded-3xl overflow-hidden bg-teal-700 text-white flex items-center justify-center shadow-sm">
                     {profileImage ? (
@@ -303,13 +320,20 @@ export default function ReceiverSettings() {
 
               {/* NAME */}
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Your Name
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-bold text-slate-700">
+                    Your Name
+                  </label>
+                  <span className="text-[10px] font-medium text-slate-400">
+                    10–50 chars, no special characters
+                  </span>
+                </div>
 
                 <input
                   type="text"
                   required
+                  minLength={10}
+                  maxLength={50}
                   value={profileForm.name}
                   onChange={(e) =>
                     setProfileForm({
@@ -317,6 +341,7 @@ export default function ReceiverSettings() {
                       name: e.target.value,
                     })
                   }
+                  placeholder="Your full name (10–50 chars)"
                   className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:border-emerald-600 focus:outline-none"
                 />
               </div>
@@ -376,7 +401,7 @@ export default function ReceiverSettings() {
 
               {/* LOCATION COORDINATES */}
               <div className="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                   <div>
                     <label className="block text-xs font-bold text-slate-700 mb-1">
                       Donation distance location
@@ -405,7 +430,7 @@ export default function ReceiverSettings() {
                         { enableHighAccuracy: true, timeout: 10000, maximumAge: 300000 }
                       );
                     }}
-                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-emerald-200 text-[#15803D] text-[10px] font-bold hover:bg-emerald-50"
+                    className="self-start sm:self-auto shrink-0 inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-emerald-200 text-[#15803D] text-[10px] font-bold hover:bg-emerald-50"
                   >
                     <MapPin className="w-3.5 h-3.5" />
                     Use my location

@@ -12,6 +12,7 @@ import {
   Bell,
   Settings,
   LogOut,
+  Trash2,
   Search,
   Users,
   Building2,
@@ -22,7 +23,7 @@ import {
 } from 'lucide-react';
 
 export default function Sidebar({ mode = 'donor', mobileOpen = false, onClose = () => {} }) {
-  const { user, logout } = useAuth();
+  const { user, logout, deleteAccount } = useAuth();
   const profileImage = user?.profile?.image
     ? `${user.profile.image}${user.profile.image.includes('?') ? '&' : '?'}v=${encodeURIComponent(user.profile.updated_at || '')}`
     : '';
@@ -81,6 +82,26 @@ export default function Sidebar({ mode = 'donor', mobileOpen = false, onClose = 
     logout();
   };
 
+  const handleDeleteAccount = async () => {
+    if (mode === 'admin') return;
+
+    const confirmed = window.confirm(
+      'Delete your SecondLife account permanently? This will remove your account and associated data. This action cannot be undone.'
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteAccount();
+    } catch (error) {
+      console.error('Account deletion error:', error);
+      window.alert(
+        error?.response?.data?.error ||
+          'Unable to delete your account right now. Please try again.'
+      );
+    }
+  };
+
   const handleNavClick = () => {
     onClose();
   };
@@ -91,9 +112,18 @@ export default function Sidebar({ mode = 'donor', mobileOpen = false, onClose = 
         <Link
           to="/"
           onClick={handleNavClick}
-          className="font-extrabold text-slate-900 text-base leading-none hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2.5 font-extrabold text-slate-900 text-base leading-none hover:opacity-80 transition-opacity"
         >
-          Second<span className="text-[#15803D]">Life</span>
+          <img
+            src="/images/secondlife_logo.jpeg"
+            alt="SecondLife"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/logo.png';
+            }}
+            className="w-7 h-7 object-contain rounded-lg"
+          />
+          <span>Second<span className="text-[#15803D]">Life</span></span>
         </Link>
       </div>
 
@@ -126,9 +156,19 @@ export default function Sidebar({ mode = 'donor', mobileOpen = false, onClose = 
 
       <div className="shrink-0 p-4 border-t border-slate-100 space-y-2 bg-white">
         <div className="flex items-center gap-3 px-2 py-1.5 min-w-0">
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-[#15803D] text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden bg-[#15803D] text-white flex items-center justify-center font-bold text-xs uppercase shrink-0">
             {profileImage ? (
-              <img src={profileImage} alt={user?.name || 'Profile'} className="w-full h-full object-cover" />
+              <>
+                <span className="absolute inset-0 flex items-center justify-center">{initials}</span>
+                <img
+                  src={profileImage}
+                  alt={user?.name || 'Profile'}
+                  className="relative w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
+              </>
             ) : (
               initials
             )}
@@ -151,6 +191,17 @@ export default function Sidebar({ mode = 'donor', mobileOpen = false, onClose = 
           <LogOut className="w-4 h-4" />
           <span>Log Out</span>
         </button>
+
+        {mode !== 'admin' && (
+          <button
+            type="button"
+            onClick={handleDeleteAccount}
+            className="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-red-700 hover:bg-red-50 rounded-xl transition-colors"
+          >
+            <Trash2 className="w-4 h-4 shrink-0" />
+            <span>Delete Account</span>
+          </button>
+        )}
       </div>
     </>
   );

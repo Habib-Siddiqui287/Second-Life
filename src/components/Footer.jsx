@@ -63,13 +63,13 @@ export default function Footer() {
             <p className="text-xs text-slate-500 leading-relaxed mb-4">
               Questions or partnerships? Reach our community support team.
             </p>
-            <div className="flex flex-col gap-2 text-xs text-slate-600 font-medium break-words">
-              <span className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-emerald-600" />
+            <div className="flex flex-col gap-2 text-xs text-slate-600 font-medium">
+              <span className="flex items-center gap-2 break-all">
+                <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
                 givesthingsasecondlife@gmail.com
               </span>
               <span className="flex items-center gap-2">
-                <Globe className="w-4 h-4 text-emerald-600" />
+                <Globe className="w-4 h-4 text-emerald-600 shrink-0" />
                 Seattle, WA • Greater Pacific Northwest
               </span>
             </div>
@@ -77,11 +77,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400">
+        <div className="border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-400 text-center md:text-left">
           <div>
             &copy; {new Date().getFullYear()} SecondLife Circular Platform. All rights reserved.
           </div>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap justify-center md:justify-end gap-4 sm:gap-6">
             <Link to="/about" className="hover:text-slate-600">Privacy Policy</Link>
             <Link to="/about" className="hover:text-slate-600">Terms of Service</Link>
             <Link to="/contact" className="hover:text-slate-600">Safety Guidelines</Link>

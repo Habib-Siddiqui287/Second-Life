@@ -62,12 +62,12 @@ export default function Contact() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-10 sm:space-y-16">
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <span className="text-xs font-extrabold tracking-widest text-[#15803D] uppercase">
           GET IN TOUCH
         </span>
-        <h1 className="text-4xl font-extrabold text-slate-900">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
           Let's Make an Impact Together.
         </h1>
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -75,9 +75,9 @@ export default function Contact() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
         {/* Contact Form */}
-        <div className="lg:col-span-7 bg-white rounded-3xl p-8 border border-slate-100 shadow-soft">
+        <div className="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft">
           <h3 className="text-lg font-bold text-slate-900 mb-6">Send Us a Message</h3>
 
           {submitted ? (

@@ -208,6 +208,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             'needed_categories',
         ]
 
+    def validate_name(self, value):
+        name = (value or '').strip()
+        if len(name) < 10 or len(name) > 50:
+            raise serializers.ValidationError('Name must be between 10 and 50 characters long.')
+        if not re.fullmatch(r'[A-Za-z0-9\s]+', name):
+            raise serializers.ValidationError('Name cannot contain special characters. Only letters, numbers, and spaces are allowed.')
+        return name
+
     def validate_email(self, value):
         email = value.strip().lower()
 
@@ -541,6 +549,16 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             'longitude',
             'handover_preference',
         ]
+
+    def validate_name(self, value):
+        if value is None:
+            return value
+        name = value.strip()
+        if len(name) < 10 or len(name) > 50:
+            raise serializers.ValidationError('Name must be between 10 and 50 characters long.')
+        if not re.fullmatch(r'[A-Za-z0-9\s]+', name):
+            raise serializers.ValidationError('Name cannot contain special characters. Only letters, numbers, and spaces are allowed.')
+        return name
 
     def update(self, instance, validated_data):
         """

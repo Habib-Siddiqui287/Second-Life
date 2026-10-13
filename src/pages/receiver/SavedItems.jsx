@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { savedItemService } from '../../services/savedItemService';
 import { useToast } from '../../context/ToastContext';
@@ -65,7 +65,11 @@ export default function SavedItems() {
               >
                 <div>
                   <div className="relative aspect-[4/3] bg-slate-50 overflow-hidden">
-                    <img src={item.primary_image} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                    <img src={item.primary_image}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/images/donations/furniture.jpg';
+                    }} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                     <div className="absolute top-3 left-3">
                       <span className="px-2.5 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-extrabold text-slate-800 uppercase shadow-xs">
                         {item.category?.name}
