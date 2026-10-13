@@ -9,6 +9,7 @@ from .models import ChatbotFAQ
 
 
 class ChatbotAssistantView(APIView):
+    authentication_classes = []
     permission_classes = [permissions.AllowAny]
 
     # =========================================================
@@ -1493,26 +1494,23 @@ class ChatbotAssistantView(APIView):
     # =========================================================
 
     def post(self, request):
+        try:
+            data = request.data if isinstance(request.data, dict) else {}
+            user_message = str(
+                data.get("message") or data.get("prompt") or data.get("query") or ""
+            ).strip()
 
-        user_message = str(
-            request.data.get(
-                "message",
-                ""
-            )
-        ).strip()
+            # -----------------------------------------------------
+            # Empty message
+            # -----------------------------------------------------
 
-        # -----------------------------------------------------
-        # Empty message
-        # -----------------------------------------------------
-
-        if not user_message:
-
-            return Response(
-                {
-                    "error": "Message cannot be empty."
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            if not user_message:
+                return Response(
+                    {
+                        "error": "Message cannot be empty."
+                    },
+                    status=status.HTTP_400_BAD_REQUEST
+                )
 
         # =====================================================
         # DATABASE-DRIVEN INTENTS
@@ -1661,3 +1659,14 @@ class ChatbotAssistantView(APIView):
 
             status=status.HTTP_200_OK
         )
+        except Exception:
+            return Response(
+                {
+                    "reply": self.DEFAULT_RESPONSE,
+                    "suggestions": self.DEFAULT_SUGGESTIONS,
+                    "category": "general",
+                    "matched_question": None,
+                    "confidence_score": 0,
+                },
+                status=status.HTTP_200_OK
+            )
