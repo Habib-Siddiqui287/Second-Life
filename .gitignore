@@ -18,3 +18,8 @@ media/*
 !media/.gitkeep
 
 .env
+
+# Local Python environment and database
+.venv/
+venv/
+db.sqlite3

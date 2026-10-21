@@ -327,13 +327,13 @@ export default function PopularDonations() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-2 mb-8 overflow-x-auto no-scrollbar pb-2 sm:pb-0 sm:flex-wrap whitespace-nowrap">
+      <div className="flex flex-wrap items-center gap-2 mb-8">
         {FILTERS.map((filter) => (
           <button
             key={filter.key}
             type="button"
             onClick={() => setActiveFilter(filter.key)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold shrink-0 transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeFilter === filter.key
                 ? 'bg-[#15803D] text-white shadow-sm'
                 : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.core.cache import cache
 from django.db import IntegrityError
+from django.db.models import Q
 from django.utils import timezone
 
 from rest_framework import status, permissions
@@ -473,6 +474,23 @@ class LoginView(APIView):
         except User.DoesNotExist:
             existing_user = None
 
+        if existing_user and existing_user.is_verified and existing_user.account_type == User.AccountType.ORGANIZATION:
+            try:
+                organization = existing_user.organization
+            except Exception:
+                organization = None
+            if organization and organization.verification_status != 'VERIFIED':
+                if organization.verification_status == 'REJECTED':
+                    message = 'Your organization registration was not approved. Please review the rejection reason or contact Second Life support.'
+                else:
+                    message = 'Your email is verified, but your organization registration is awaiting administrator approval. You can sign in after it is approved.'
+                return Response({
+                    'error': message,
+                    'organization_pending': organization.verification_status == 'PENDING',
+                    'organization_status': organization.verification_status,
+                    'verification_reason': organization.verification_reason,
+                }, status=status.HTTP_403_FORBIDDEN)
+
         if existing_user and not existing_user.is_verified:
 
             return Response(
@@ -684,13 +702,9 @@ class ProfileImageUploadView(APIView):
         # Backend image validation
         # ----------------------------------------------------
 
-        if not image.content_type or not image.content_type.startswith(
-            'image/'
-        ):
+        if not image.content_type or image.content_type not in {'image/jpeg', 'image/png', 'image/webp'}:
             return Response(
-                {
-                    'error': 'Please upload a valid image file.'
-                },
+                {'error': 'Please upload a PNG, JPEG, or WebP image.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -699,6 +713,19 @@ class ProfileImageUploadView(APIView):
                 {
                     'error': 'Image size must be 5 MB or smaller.'
                 },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        from PIL import Image, UnidentifiedImageError
+        try:
+            decoded = Image.open(image)
+            if decoded.format not in {'JPEG', 'PNG', 'WEBP'}:
+                raise ValueError('Unsupported image format')
+            decoded.verify()
+            image.seek(0)
+        except (UnidentifiedImageError, OSError, ValueError):
+            return Response(
+                {'error': 'The uploaded file is not a valid image.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -991,7 +1018,19 @@ class AdminUserListView(APIView):
 
     def get(self, request):
 
-        users = User.objects.all()
+        users = User.objects.select_related('profile', 'organization').all()
+        role = request.query_params.get('role')
+        if role:
+            users = users.filter(role=role.upper())
+        search = (request.query_params.get('search') or '').strip()
+        if search:
+            users = users.filter(
+                __import__('django.db.models', fromlist=['Q']).Q(name__icontains=search)
+                | __import__('django.db.models', fromlist=['Q']).Q(email__icontains=search)
+                | __import__('django.db.models', fromlist=['Q']).Q(city__icontains=search)
+                | __import__('django.db.models', fromlist=['Q']).Q(country__icontains=search)
+            )
+        users = users.order_by('-created_at')
 
         return Response(
             UserSerializer(

@@ -70,7 +70,7 @@ export default function ReceiverDashboard() {
   return (
     <div className="space-y-8">
       {/* Hero Banner (Matches Design Image 11) */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#EBF5EE] via-[#F4F9F5] to-white p-5 sm:p-8 md:p-10 border border-emerald-100/70 shadow-soft flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#EBF5EE] via-[#F4F9F5] to-white p-8 sm:p-10 border border-emerald-100/70 shadow-soft flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="max-w-xl space-y-3 z-10">
           <span className="text-[11px] font-extrabold tracking-widest text-[#0F5D28] uppercase bg-emerald-100/80 px-3 py-1 rounded-full">
             FIND WHAT YOU NEED
@@ -100,8 +100,8 @@ export default function ReceiverDashboard() {
       </div>
 
       {/* Metrics Row (Matches Design Image 11) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Items Received
@@ -109,7 +109,7 @@ export default function ReceiverDashboard() {
             <Sparkles className="w-5 h-5 text-emerald-600" />
           </div>
 
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#15803D]">
+          <div className="text-3xl font-extrabold text-[#15803D]">
             {stats?.items_given_second_life ?? 0}
           </div>
 
@@ -118,7 +118,7 @@ export default function ReceiverDashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Active Requests
@@ -126,7 +126,7 @@ export default function ReceiverDashboard() {
             <Clock className="w-5 h-5 text-amber-500" />
           </div>
 
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          <div className="text-3xl font-extrabold text-slate-900">
             {stats?.active_requests ?? 0}
           </div>
 
@@ -135,7 +135,7 @@ export default function ReceiverDashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Ready for Pickup
@@ -143,7 +143,7 @@ export default function ReceiverDashboard() {
             <Truck className="w-5 h-5 text-teal-600" />
           </div>
 
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          <div className="text-3xl font-extrabold text-slate-900">
             {stats?.ready_for_pickup ?? 0}
           </div>
 
@@ -152,7 +152,7 @@ export default function ReceiverDashboard() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
               Waste Diverted
@@ -160,7 +160,7 @@ export default function ReceiverDashboard() {
             <Package className="w-5 h-5 text-blue-600" />
           </div>
 
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+          <div className="text-3xl font-extrabold text-slate-900">
             {Number(stats?.waste_diverted_kg ?? 0).toFixed(3)}kg
           </div>
 
@@ -193,7 +193,7 @@ export default function ReceiverDashboard() {
         </div>
 
         {donations.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-slate-100 shadow-soft p-6 sm:p-10 text-center">
+          <div className="bg-white rounded-3xl border border-slate-100 shadow-soft p-10 text-center">
             <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-emerald-50 flex items-center justify-center">
               <Package className="w-7 h-7 text-emerald-600" />
             </div>
@@ -216,7 +216,7 @@ export default function ReceiverDashboard() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 justify-items-center sm:justify-items-stretch">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 justify-items-center sm:justify-items-stretch">
             {donations.map((item) => (
               <div
                 key={item.id}
@@ -290,7 +290,7 @@ export default function ReceiverDashboard() {
 
       {/* My Recent Requests Table (Matches Design Image 11) */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-soft overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-slate-50 flex items-center justify-between">
+        <div className="p-6 border-b border-slate-50 flex items-center justify-between">
           <div>
             <h3 className="font-extrabold text-base text-slate-900">
               My Recent Requests
@@ -303,7 +303,7 @@ export default function ReceiverDashboard() {
 
           <Link
             to="/receiver/requests"
-            className="text-xs font-bold text-[#15803D] hover:text-[#0F5D28] flex items-center gap-1 shrink-0"
+            className="text-xs font-bold text-[#15803D] hover:text-[#0F5D28] flex items-center gap-1"
           >
             <span>View All Requests</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -311,7 +311,7 @@ export default function ReceiverDashboard() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[500px] text-left text-xs">
+          <table className="w-full text-left text-xs">
             <thead className="bg-slate-50/75 text-slate-500 uppercase tracking-wider text-[10px] font-bold">
               <tr>
                 <th className="py-3 px-6">Item</th>

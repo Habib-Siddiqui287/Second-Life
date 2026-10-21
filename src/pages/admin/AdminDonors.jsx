@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/savedItemService';
 import { useToast } from '../../context/ToastContext';
 import StatusBadge from '../../components/StatusBadge';
@@ -11,6 +11,7 @@ export default function AdminDonors() {
   const [donors, setDonors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
 
   const fetchDonors = () => {
     setLoading(true);
@@ -21,7 +22,8 @@ export default function AdminDonors() {
   };
 
   useEffect(() => {
-    fetchDonors();
+    const timer = setTimeout(fetchDonors, 350);
+    return () => clearTimeout(timer);
   }, [search]);
 
   const toggleUserStatus = async (user) => {
@@ -86,9 +88,9 @@ export default function AdminDonors() {
                   <tr key={d.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-[#15803D] text-white font-extrabold text-xs flex items-center justify-center">
-                          {d.initials}
-                        </div>
+                        <button type="button" onClick={() => d.profile?.image && setPreviewImage({ url: d.profile.image, name: d.name })} title={d.profile?.image ? "View profile picture" : "No profile picture uploaded"} className="w-10 h-10 rounded-xl overflow-hidden shrink-0 bg-[#15803D] text-white font-extrabold text-xs flex items-center justify-center">
+                          {d.profile?.image ? <img src={d.profile.image} alt={d.name} className="w-full h-full object-cover" onError={(e) => { const button = e.currentTarget.parentElement; e.currentTarget.remove(); if (button) button.textContent = d.initials || d.name?.slice(0, 1) || '?'; }} /> : (d.initials || d.name?.slice(0, 1) || '?')}
+                        </button>
                         <div>
                           <div className="flex items-center gap-1">
                             <span className="font-extrabold text-xs text-slate-900">{d.name}</span>
@@ -106,7 +108,7 @@ export default function AdminDonors() {
                       </span>
                     </td>
                     <td className="py-4 px-6 font-medium text-slate-600">
-                      {d.city || 'Seattle'}, {d.country}
+                      {d.city || 'Location not provided'}{d.country ? `, ${d.country}` : ''}
                     </td>
                     <td className="py-4 px-6">
                       <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
@@ -141,6 +143,17 @@ export default function AdminDonors() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+      {previewImage && (
+        <div className="fixed inset-0 z-[100] bg-black/70 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Profile image preview" onClick={() => setPreviewImage(null)}>
+          <div className="max-w-2xl max-h-[90vh] bg-white rounded-2xl p-3 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between gap-4 px-1 pb-3">
+              <span className="font-semibold text-slate-800">{previewImage.name}</span>
+              <button type="button" onClick={() => setPreviewImage(null)} className="text-sm font-bold text-slate-600">Close</button>
+            </div>
+            <img src={previewImage.url} alt={`${previewImage.name} profile`} className="max-w-full max-h-[75vh] object-contain rounded-xl" />
           </div>
         </div>
       )}

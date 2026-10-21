@@ -68,12 +68,12 @@ export default function MyDonations() {
 
       {/* Filter Tabs & Search */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           {['ALL', 'AVAILABLE', 'MATCHED', 'IN_DELIVERY', 'COMPLETED'].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
                 statusFilter === st
                   ? 'bg-[#15803D] text-white shadow-xs'
                   : 'text-slate-600 hover:bg-slate-100'
@@ -106,7 +106,7 @@ export default function MyDonations() {
           onAction={() => (window.location.href = '/donor/donations/create')}
         />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {donations.map((d) => (
             <div
               key={d.id}
@@ -124,7 +124,7 @@ export default function MyDonations() {
                   </div>
                 </div>
 
-                <div className="p-4 sm:p-5 space-y-3">
+                <div className="p-5 space-y-3">
                   <div className="flex items-center justify-between">
                     <span className="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-full">
                       {d.category?.name}
@@ -137,15 +137,11 @@ export default function MyDonations() {
                 </div>
               </div>
 
-              <div className="p-4 sm:p-5 pt-0 border-t border-slate-50 flex flex-wrap items-center justify-between gap-2 mt-3">
+              <div className="p-5 pt-0 border-t border-slate-50 flex items-center justify-between mt-3">
                 <span className="text-xs font-bold text-slate-700">
                   {d.requests_count} pending request{d.requests_count !== 1 ? 's' : ''}
                 </span>
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Link to={`/donor/donations/${d.id}`} className="px-3 py-1.5 bg-emerald-50 text-[#15803D] rounded-xl text-xs font-bold flex items-center gap-1"><Eye className="w-3.5 h-3.5"/>View</Link>
-                  <Link to={`/donor/donations/${d.id}?edit=1`} className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1"><Pencil className="w-3.5 h-3.5"/>Edit</Link>
-                  <button type="button" onClick={()=>handleDelete(d.id)} className="px-2.5 py-1.5 bg-rose-50 text-rose-700 rounded-xl hover:bg-rose-100 transition-colors"><Trash2 className="w-3.5 h-3.5"/></button>
-                </div>
+                <div className="flex items-center gap-2"><Link to={`/donor/donations/${d.id}`} className="px-3 py-1.5 bg-emerald-50 text-[#15803D] rounded-xl text-xs font-bold flex items-center gap-1"><Eye className="w-3.5 h-3.5"/>View</Link><Link to={`/donor/donations/${d.id}?edit=1`} className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1"><Pencil className="w-3.5 h-3.5"/>Edit</Link><button type="button" onClick={()=>handleDelete(d.id)} className="px-3 py-1.5 bg-rose-50 text-rose-700 rounded-xl"><Trash2 className="w-3.5 h-3.5"/></button></div>
               </div>
             </div>
           ))}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/savedItemService';
 import { useToast } from '../../context/ToastContext';
 import StatusBadge from '../../components/StatusBadge';
@@ -70,12 +70,12 @@ export default function AdminVerification() {
         </div>
 
         {/* Filter Pills */}
-        <div className="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm self-start max-w-full overflow-x-auto no-scrollbar">
+        <div className="flex bg-white p-1 rounded-2xl border border-slate-100 shadow-sm self-start">
           {['PENDING', 'VERIFIED', 'REJECTED', 'ALL'].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`shrink-0 px-3 sm:px-4 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 filter === f ? 'bg-[#15803D] text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
@@ -93,16 +93,16 @@ export default function AdminVerification() {
           message="There are no organizations pending verification in this queue."
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {orgs.map((org) => (
             <div
               key={org.id}
-              className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-4 flex flex-col justify-between"
+              className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-soft space-y-4 flex flex-col justify-between"
             >
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#15803D] flex items-center justify-center font-bold shadow-xs shrink-0">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-[#15803D] flex items-center justify-center font-bold shadow-xs">
                       <Building2 className="w-6 h-6" />
                     </div>
                     <div>
@@ -114,7 +114,7 @@ export default function AdminVerification() {
                 </div>
 
                 {/* Info Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
+                <div className="grid grid-cols-2 gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
                   <div>
                     <span className="text-slate-400 font-bold uppercase text-[10px] block mb-0.5">License / Tax ID</span>
                     <span className="font-mono font-bold text-slate-800">{org.license_number || 'Pending Submission'}</span>

@@ -25,7 +25,7 @@ import PopularDonations from '../../components/PopularDonations';
 // Animated Counter
 // ============================================================
 
-function Counter({ value, suffix = '' }) {
+function Counter({ value, suffix = '+' }) {
   const [count, setCount] = useState(0);
 
   const ref = useRef(null);
@@ -125,7 +125,7 @@ export default function Home() {
       });
 
     loadStats();
-    const interval = setInterval(loadStats, 5000);
+    const interval = setInterval(loadStats, 30000);
 
     return () => {
       mounted = false;
@@ -253,13 +253,13 @@ export default function Home() {
   // ==========================================================
 
   return (
-    <div className="space-y-14 sm:space-y-20 lg:space-y-24 pb-16 sm:pb-20 overflow-x-hidden">
+    <div className="space-y-24 pb-20 overflow-x-hidden">
 
       {/* ======================================================
           HERO SECTION
       ====================================================== */}
 
-      <section className="relative overflow-hidden pt-8 sm:pt-12 pb-14 sm:pb-20 bg-gradient-to-b from-[#F0FDF4] via-[#F8FAFC] to-[#F0F7FB]">
+      <section className="relative overflow-hidden pt-12 pb-20 bg-gradient-to-b from-[#F0FDF4] via-[#F8FAFC] to-[#F0F7FB]">
 
         {/* Background decorations */}
 
@@ -326,12 +326,12 @@ export default function Home() {
 
               <motion.div
                 variants={itemVariants}
-                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2"
+                className="flex flex-wrap items-center gap-4 pt-2"
               >
 
                 <Link
                   to="/donor/donations/create"
-                  className="px-6 py-3.5 bg-[#15803D] hover:bg-[#0F5D28] text-white rounded-2xl text-sm font-bold shadow-lg shadow-emerald-700/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                  className="px-6 py-3.5 bg-[#15803D] hover:bg-[#0F5D28] text-white rounded-2xl text-sm font-bold shadow-lg shadow-emerald-700/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-2"
                 >
                   <span>Donate an Item</span>
 
@@ -341,7 +341,7 @@ export default function Home() {
 
                 <Link
                   to="/categories"
-                  className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-2xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all text-center"
+                  className="px-6 py-3.5 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-2xl text-sm font-bold shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   Find What You Need
                 </Link>
@@ -430,7 +430,7 @@ export default function Home() {
                     <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
 
                     <span className="text-xs font-bold text-slate-800">
-                      {Number(stats.total_donations) || 0} items recirculated
+                      Over 1,250 items recirculated
                     </span>
 
                   </div>
@@ -475,7 +475,7 @@ export default function Home() {
           transition={{
             duration: 0.6,
           }}
-          className="bg-white rounded-3xl p-5 sm:p-8 md:p-10 border border-slate-100 shadow-soft grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 text-center"
+          className="bg-white rounded-3xl p-8 sm:p-10 border border-slate-100 shadow-soft grid grid-cols-2 md:grid-cols-4 gap-8 text-center"
         >
 
           {/* Total Donations */}
@@ -483,7 +483,7 @@ export default function Home() {
           <div className="space-y-1">
 
             <div className="text-3xl sm:text-4xl font-extrabold text-[#15803D]">
-              <Counter value={Number(stats.total_donations) || 0} />
+              <Counter value={Math.max(0, Number(stats.total_donations) || 0)} />
             </div>
 
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -498,7 +498,7 @@ export default function Home() {
           <div className="space-y-1">
 
             <div className="text-3xl sm:text-4xl font-extrabold text-[#15803D]">
-              <Counter value={Number(stats.active_donors) || 0} />
+              <Counter value={Math.max(0, Number(stats.active_donors) || 0)} />
             </div>
 
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -513,7 +513,7 @@ export default function Home() {
           <div className="space-y-1">
 
             <div className="text-3xl sm:text-4xl font-extrabold text-[#15803D]">
-              <Counter value={Number(stats.receivers_helped) || 0} />
+              <Counter value={Math.max(0, Number(stats.receivers_helped) || 0)} />
             </div>
 
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -528,7 +528,7 @@ export default function Home() {
           <div className="space-y-1">
 
             <div className="text-3xl sm:text-4xl font-extrabold text-[#15803D]">
-              <Counter value={Number(stats.communities_served) || 0} />
+              <Counter value={Math.max(0, Number(stats.communities_served) || 0)} />
             </div>
 
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider">
@@ -781,7 +781,7 @@ export default function Home() {
           transition={{
             duration: 0.6,
           }}
-          className="bg-gradient-to-r from-emerald-900 to-[#0F5D28] text-white rounded-3xl p-6 sm:p-10 md:p-12 relative overflow-hidden shadow-xl"
+          className="bg-gradient-to-r from-emerald-900 to-[#0F5D28] text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl"
         >
 
           {/* Decorative circle */}
@@ -809,13 +809,13 @@ export default function Home() {
             </p>
 
 
-            <div className="pt-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
+            <div className="pt-4 flex flex-wrap gap-4">
 
               {/* REGISTER LINK */}
 
               <Link
                 to="/register"
-                className="px-6 py-3 bg-white hover:bg-emerald-50 text-[#0F5D28] rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition-all text-center"
+                className="px-6 py-3 bg-white hover:bg-emerald-50 text-[#0F5D28] rounded-xl text-xs font-bold shadow-md hover:scale-[1.02] transition-all"
               >
                 Join Community Today
               </Link>
@@ -825,7 +825,7 @@ export default function Home() {
 
               <Link
                 to="/about"
-                className="px-6 py-3 bg-emerald-800/80 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-all border border-emerald-600 hover:scale-[1.02] text-center"
+                className="px-6 py-3 bg-emerald-800/80 hover:bg-emerald-800 text-white rounded-xl text-xs font-bold transition-all border border-emerald-600 hover:scale-[1.02]"
               >
                 Read Our Impact Report
               </Link>
@@ -860,7 +860,7 @@ export default function Home() {
           transition={{
             duration: 0.5,
           }}
-          className="bg-white rounded-3xl p-6 sm:p-10 border border-slate-100 shadow-soft space-y-4"
+          className="bg-white rounded-3xl p-10 border border-slate-100 shadow-soft space-y-4"
         >
 
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
@@ -874,13 +874,13 @@ export default function Home() {
           </p>
 
 
-          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-2">
+          <div className="flex flex-wrap justify-center gap-4 pt-2">
 
             {/* DONATE */}
 
             <Link
               to="/donor/donations/create"
-              className="px-6 py-3 bg-[#15803D] hover:bg-[#0F5D28] text-white rounded-xl text-xs font-bold shadow-sm hover:scale-[1.02] transition-all text-center"
+              className="px-6 py-3 bg-[#15803D] hover:bg-[#0F5D28] text-white rounded-xl text-xs font-bold shadow-sm hover:scale-[1.02] transition-all"
             >
               Donate Now
             </Link>
@@ -890,7 +890,7 @@ export default function Home() {
 
             <Link
               to="/categories"
-              className="px-6 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold hover:scale-[1.02] transition-all text-center"
+              className="px-6 py-3 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold hover:scale-[1.02] transition-all"
             >
               Request an Item
             </Link>

@@ -84,10 +84,10 @@ export default function DonationDetail() {
         Back to My Donations
       </Link>
 
-      <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-6">
+      <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-50 pb-4">
           <div>
-            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <div className="flex items-center gap-2 mb-1.5">
               <span className="text-[10px] font-extrabold uppercase tracking-wider bg-emerald-50 text-emerald-800 px-2.5 py-0.5 rounded-full">
                 {donation.category?.name}
               </span>
@@ -140,7 +140,7 @@ export default function DonationDetail() {
       </div>
 
       {/* Incoming Requests Section */}
-      <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-4">
+      <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-soft space-y-4">
         <h3 className="font-extrabold text-base text-slate-900">
           Incoming Requests for this Item ({requests.length})
         </h3>

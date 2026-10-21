@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Menu, X, Bell, LogOut, LayoutDashboard } from 'lucide-react';
@@ -71,18 +71,10 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-16">
 
           {/* Logo */}
-          <Link
-            to="/"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-3 group"
-          >
+          <Link to="/" className="flex items-center gap-3 group">
             <img
-              src="/images/secondlife_logo.jpeg"
+              src="/images/items/image1.jpeg"
               alt="SecondLife"
-              onError={(e) => {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = '/logo.png';
-              }}
               className="w-9 h-9 object-contain rounded-xl group-hover:scale-105 transition-transform"
             />
 

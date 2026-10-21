@@ -23,9 +23,14 @@ class PublicStatsView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        total_donations = Donation.objects.count()
+        total_donations = Donation.objects.exclude(status__in=[Donation.Status.CANCELLED, Donation.Status.DRAFT]).count()
         active_donations = Donation.objects.filter(status=Donation.Status.AVAILABLE).count()
-        active_donors = User.objects.filter(role='DONOR', is_active=True).count()
+        active_donors = User.objects.filter(
+            role='DONOR', is_active=True
+        ).filter(
+            Q(account_type='INDIVIDUAL') |
+            Q(organization__verification_status=Organization.VerificationStatus.VERIFIED)
+        ).distinct().count()
         receivers_helped = Connection.objects.filter(status=Connection.Status.COMPLETED).values('receiver_id').distinct().count()
         successful_connections = Connection.objects.filter(status=Connection.Status.COMPLETED).count()
         completed_connections = Connection.objects.filter(status=Connection.Status.COMPLETED).select_related('donation')
@@ -278,14 +283,11 @@ class AdminDashboardStatsView(APIView):
         # endpoint, so new donations/users are reflected without a page reload.
         now = timezone.localtime(timezone.now()).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
         months = []
-        cursor = now - timedelta(days=365)
-        cursor = cursor.replace(day=1)
-        for _ in range(12):
-            months.append(cursor)
-            if cursor.month == 12:
-                cursor = cursor.replace(year=cursor.year + 1, month=1)
-            else:
-                cursor = cursor.replace(month=cursor.month + 1)
+        # Include the current month and the preceding 11 calendar months.
+        for offset in range(11, -1, -1):
+            month_index = now.year * 12 + (now.month - 1) - offset
+            year, zero_based_month = divmod(month_index, 12)
+            months.append(now.replace(year=year, month=zero_based_month + 1, day=1))
 
         monthly_donations = []
         user_growth = []
@@ -347,47 +349,49 @@ class AdminReportsView(APIView):
 
     def get(self, request):
         period = request.query_params.get('period', '30d')
-
+        from donations.models import Donation
+        total_connections = Connection.objects.exclude(status=Connection.Status.CANCELLED).count()
+        completed_connections = Connection.objects.filter(status=Connection.Status.COMPLETED).count()
+        completion_rate = round((completed_connections / total_connections) * 100, 1) if total_connections else 0
+        total_weight = sum(
+            float(donation.total_weight_kg or 0)
+            for donation in Donation.objects.filter(
+                connections__status=Connection.Status.COMPLETED
+            ).distinct().iterator()
+        )
+        from django.db.models import Avg, Count, Q
+        breakdown = []
+        categories = Category.objects.annotate(
+            items=Count('donations', filter=~Q(donations__status__in=[Donation.Status.CANCELLED, Donation.Status.DRAFT]), distinct=True),
+            delivered=Count('donations', filter=Q(donations__status__in=[Donation.Status.DELIVERED, Donation.Status.COMPLETED]), distinct=True),
+        ).order_by('name')
+        for category in categories:
+            category_weight = sum(
+                float(donation.total_weight_kg or 0)
+                for donation in Donation.objects.filter(
+                    category=category,
+                    connections__status=Connection.Status.COMPLETED
+                ).distinct().iterator()
+            )
+            breakdown.append({
+                'category': category.name,
+                'items': category.items,
+                'delivered': category.delivered,
+                'co2_kg': round(category_weight * 3.8, 1),
+            })
+        from feedback.models import Feedback
+        avg_rating = Feedback.objects.aggregate(avg=Avg('rating'))['avg']
         return Response({
             'period': period,
             'metrics': {
-                'completion_rate': '92.4%',
-                'average_match_time': '1.8 days',
-                'total_co2_offset_tonnes': 14.6,
-                'community_satisfaction': '4.9 / 5.0'
+                'completion_rate': f'{completion_rate}%',
+                'average_match_time': None,
+                'total_co2_offset_tonnes': round(total_weight * 3.8 / 1000, 3),
+                'community_satisfaction': f'{avg_rating:.1f} / 5.0' if avg_rating is not None else None,
+                'total_donations': Donation.objects.exclude(status__in=[Donation.Status.CANCELLED, Donation.Status.DRAFT]).count(),
+                'completed_connections': completed_connections,
             },
-            'breakdown_by_category': [
-                {
-                    'category': 'Furniture',
-                    'items': 42,
-                    'delivered': 39,
-                    'co2_kg': 580
-                },
-                {
-                    'category': 'Clothes',
-                    'items': 86,
-                    'delivered': 82,
-                    'co2_kg': 320
-                },
-                {
-                    'category': 'Electronics',
-                    'items': 34,
-                    'delivered': 31,
-                    'co2_kg': 490
-                },
-                {
-                    'category': 'Books',
-                    'items': 65,
-                    'delivered': 63,
-                    'co2_kg': 140
-                },
-                {
-                    'category': 'Food',
-                    'items': 28,
-                    'delivered': 28,
-                    'co2_kg': 110
-                },
-            ]
+            'breakdown_by_category': breakdown,
         })
 
 

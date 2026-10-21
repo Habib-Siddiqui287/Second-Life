@@ -125,14 +125,13 @@ function streamBotMessage(text, setMessages) {
   ]);
 
   let index = 0;
-  const step = Math.max(1, Math.ceil(text.length / 50));
 
   const streamNextCharacter = () => {
     if (index >= text.length) {
       return;
     }
 
-    index = Math.min(text.length, index + step);
+    index += 1;
 
     setMessages((prev) =>
       prev.map((message) =>
@@ -145,9 +144,7 @@ function streamBotMessage(text, setMessages) {
       )
     );
 
-    if (index < text.length) {
-      setTimeout(streamNextCharacter, 16);
-    }
+    setTimeout(streamNextCharacter, 18);
   };
 
   streamNextCharacter();
@@ -228,44 +225,8 @@ export default function ChatWidget() {
     setSending(true);
 
     try {
-      let data = null;
-
-      try {
-        const response = await api.post('/chat/', { message: text });
-        data = response.data;
-      } catch (apiErr) {
-        console.warn('[SecondLife Chatbot] Primary api call failed, attempting fallback...', apiErr);
-
-        // Fallback strategies:
-        // 1. Same-origin proxy /api/chat/
-        // 2. Direct Render URL https://second-life-e45t.onrender.com/api/chat/
-        const fallbackUrls = [
-          '/api/chat/',
-          'https://second-life-e45t.onrender.com/api/chat/'
-        ];
-
-        let success = false;
-        for (const url of fallbackUrls) {
-          try {
-            const fetchRes = await fetch(url, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ message: text })
-            });
-            if (fetchRes.ok) {
-              data = await fetchRes.json();
-              success = true;
-              break;
-            }
-          } catch (fetchErr) {
-            console.warn(`[SecondLife Chatbot] Fallback fetch failed for ${url}:`, fetchErr);
-          }
-        }
-
-        if (!success || !data) {
-          throw apiErr;
-        }
-      }
+      const response = await api.post('/chat/', { message: text });
+      const data = response.data;
 
       const reply =
         typeof data?.reply === 'string'
@@ -274,10 +235,6 @@ export default function ChatWidget() {
           ? data.answer
           : typeof data?.response === 'string'
           ? data.response
-          : typeof data?.message === 'string'
-          ? data.message
-          : typeof data?.text === 'string'
-          ? data.text
           : '';
 
       console.log(
@@ -372,7 +329,7 @@ export default function ChatWidget() {
         <div
           className="
             absolute
-            bottom-[58px] sm:bottom-[68px]
+            bottom-[68px]
             right-0
             w-[360px]
             max-w-[calc(100vw-24px)]
@@ -613,7 +570,7 @@ export default function ChatWidget() {
 
                 </div>
 
-                <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                <div className="flex gap-1.5 overflow-x-auto pb-1 scrollbar-thin">
 
                   {suggestions
                     .slice(0, 5)
@@ -739,29 +696,25 @@ export default function ChatWidget() {
             : 'Open SecondLife AI'
         }
         className="
-          relative
-          w-12
-          h-12
-          sm:w-auto
-          sm:h-12
-          p-0
-          sm:px-4
+          h-14
+          px-4
+          sm:px-5
           rounded-full
           bg-[#087A3F]
           text-white
           shadow-lg
           hover:bg-[#066832]
-          hover:scale-105
+          hover:scale-[1.02]
           active:scale-95
           transition-all
           flex
           items-center
-          justify-center
-          sm:gap-2.5
+          gap-2
+          sm:gap-3
         "
       >
 
-        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
 
           {open ? (
             <X className="w-4 h-4" />
@@ -771,14 +724,11 @@ export default function ChatWidget() {
 
         </div>
 
-        {/* Compact online indicator for mobile */}
-        <span className="sm:hidden absolute top-1 right-1 w-2.5 h-2.5 rounded-full bg-emerald-300 ring-2 ring-[#087A3F]" />
-
-        <span className="hidden sm:inline font-bold text-sm whitespace-nowrap">
+        <span className="font-bold text-sm whitespace-nowrap">
           SecondLife AI
         </span>
 
-        <span className="hidden sm:inline w-2 h-2 rounded-full bg-emerald-300 shrink-0" />
+        <span className="w-2 h-2 rounded-full bg-emerald-300 shrink-0" />
 
       </button>
 

@@ -209,12 +209,20 @@ class RegisterSerializer(serializers.ModelSerializer):
         ]
 
     def validate_name(self, value):
-        name = (value or '').strip()
-        if len(name) < 10 or len(name) > 50:
-            raise serializers.ValidationError('Name must be between 10 and 50 characters long.')
-        if not re.fullmatch(r'[A-Za-z0-9\s]+', name):
-            raise serializers.ValidationError('Name cannot contain special characters. Only letters, numbers, and spaces are allowed.')
-        return name
+        value = ' '.join(str(value or '').split())
+        if not value or len(value) < 2 or len(value) > 100:
+            raise serializers.ValidationError('Enter a name between 2 and 100 characters.')
+        # Unicode letters and combining marks are accepted; spaces, apostrophes,
+        # hyphens, and periods are allowed for legitimate international names.
+        if not re.fullmatch(r"[\\w\\u0300-\\u036f .'-]+", value, flags=re.UNICODE) or any(ch.isdigit() or ch == '_' for ch in value):
+            raise serializers.ValidationError('Name may contain letters, spaces, apostrophes, hyphens, and periods only.')
+        return value
+
+    def validate_address(self, value):
+        value = ' '.join(str(value or '').split())
+        if len(value) < 4 or len(value) > 255 or not any(ch.isalnum() for ch in value):
+            raise serializers.ValidationError('Enter a valid address between 4 and 255 characters.')
+        return value
 
     def validate_email(self, value):
         email = value.strip().lower()
@@ -424,7 +432,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             account_type ==
             User.AccountType.ORGANIZATION
         ):
-            Organization.objects.create(
+            organization = Organization.objects.create(
                 user=user,
                 organization_name=(
                     org_name or user.name
@@ -445,6 +453,24 @@ class RegisterSerializer(serializers.ModelSerializer):
                     Organization.VerificationStatus.PENDING
                 )
             )
+            # Send only after the registration transaction commits. A mail
+            # provider outage must not undo a valid registration.
+            from django.db import transaction
+            from services.email_service import send_platform_email
+            from django.utils import timezone
+            org_email = (
+                f"A new organization has submitted a registration request on Second Life.\\n\\n"
+                f"Organization: {organization.organization_name}\\n"
+                f"Contact Email: {organization.official_email}\\n"
+                f"Registration Date: {timezone.localtime(organization.created_at).strftime('%Y-%m-%d %H:%M')}\\n"
+                f"Status: Pending Approval\\n\\n"
+                "Please review this registration request in the Second Life Admin Dashboard."
+            )
+            transaction.on_commit(lambda: send_platform_email(
+                'givesthingsasecondlife@gmail.com',
+                'New Organization Registration Request — Second Life',
+                org_email
+            ))
 
         NotificationService.send(
             user=user,
@@ -496,7 +522,9 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ProfileUpdateSerializer(serializers.ModelSerializer):
     bio = serializers.CharField(
         required=False,
-        allow_blank=True
+        allow_blank=True,
+        max_length=100,
+        error_messages={'max_length': 'Bio cannot exceed 100 characters.'}
     )
 
     preferred_categories = serializers.ListField(
@@ -551,14 +579,18 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         ]
 
     def validate_name(self, value):
-        if value is None:
-            return value
-        name = value.strip()
-        if len(name) < 10 or len(name) > 50:
-            raise serializers.ValidationError('Name must be between 10 and 50 characters long.')
-        if not re.fullmatch(r'[A-Za-z0-9\s]+', name):
-            raise serializers.ValidationError('Name cannot contain special characters. Only letters, numbers, and spaces are allowed.')
-        return name
+        value = ' '.join(str(value or '').split())
+        if not value or len(value) < 2 or len(value) > 100:
+            raise serializers.ValidationError('Enter a name between 2 and 100 characters.')
+        if not re.fullmatch(r"[\\w\\u0300-\\u036f .'-]+", value, flags=re.UNICODE) or any(ch.isdigit() or ch == '_' for ch in value):
+            raise serializers.ValidationError('Name may contain letters, spaces, apostrophes, hyphens, and periods only.')
+        return value
+
+    def validate_address(self, value):
+        value = ' '.join(str(value or '').split())
+        if len(value) < 4 or len(value) > 255 or not any(ch.isalnum() for ch in value):
+            raise serializers.ValidationError('Enter a valid address between 4 and 255 characters.')
+        return value
 
     def update(self, instance, validated_data):
         """

@@ -238,12 +238,22 @@ class UploadDonationImageView(APIView):
         if file_obj.size > 5 * 1024 * 1024:
             return Response({'error': 'Image file size exceeds 5MB limit.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Validate file type
-        valid_extensions = ['.png', '.jpg', '.jpeg', '.webp']
+        # Validate both declared MIME type and the actual decoded image content.
+        valid_extensions = {'.png', '.jpg', '.jpeg', '.webp'}
+        valid_mimes = {'image/png', 'image/jpeg', 'image/webp'}
         import os
+        from PIL import Image, UnidentifiedImageError
         ext = os.path.splitext(file_obj.name)[1].lower()
-        if ext not in valid_extensions:
-            return Response({'error': 'Unsupported file format. Please upload PNG, JPG, or WEBP.'}, status=status.HTTP_400_BAD_REQUEST)
+        if ext not in valid_extensions or file_obj.content_type not in valid_mimes:
+            return Response({'error': 'Unsupported image. Upload a valid PNG, JPG, or WEBP file.'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            image = Image.open(file_obj)
+            if image.format not in {'PNG', 'JPEG', 'WEBP'}:
+                raise ValueError('Unsupported image format')
+            image.verify()
+            file_obj.seek(0)
+        except (UnidentifiedImageError, OSError, ValueError):
+            return Response({'error': 'The uploaded file is not a valid image.'}, status=status.HTTP_400_BAD_REQUEST)
 
         safe_name = default_storage.get_available_name(
             f"donations/{file_obj.name}"

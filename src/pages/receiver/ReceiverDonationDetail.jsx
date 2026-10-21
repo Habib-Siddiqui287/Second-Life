@@ -349,12 +349,12 @@ export default function ReceiverDonationDetail() {
           </div>
 
           {donation.images?.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+            <div className="flex gap-3 overflow-x-auto pb-1">
               {donation.images.map((img, idx) => (
                 <div
                   key={idx}
                   onClick={() => setActiveImage(img.url)}
-                  className={`shrink-0 w-20 h-20 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${
+                  className={`w-20 h-20 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${
                     activeImage === img.url
                       ? 'border-[#15803D] shadow-sm'
                       : 'border-transparent opacity-70 hover:opacity-100'
@@ -374,7 +374,7 @@ export default function ReceiverDonationDetail() {
             </div>
           )}
 
-          <div className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-soft space-y-4">
+          <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft space-y-4">
 
             <h3 className="font-extrabold text-sm text-slate-900 uppercase tracking-wider">
               Description
@@ -412,7 +412,7 @@ export default function ReceiverDonationDetail() {
 
         <div className="lg:col-span-5 space-y-6">
 
-          <div className="bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-5 sm:space-y-6 min-w-0">
+          <div className="bg-white rounded-3xl p-4 sm:p-8 border border-slate-100 shadow-soft space-y-5 sm:space-y-6 min-w-0">
 
             <div className="flex items-start justify-between gap-4">
 
@@ -521,7 +521,7 @@ export default function ReceiverDonationDetail() {
                   </div>
 
                   <span className="text-[11px] text-emerald-800 font-medium">
-                    Verified Donor{donation.donor_items_count !== undefined && donation.donor_items_count !== null ? ` • ${donation.donor_items_count} items given` : ''}
+                    Verified Donor • {donation.donor_items_count || 12} items given
                   </span>
 
                 </div>

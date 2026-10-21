@@ -82,7 +82,7 @@ export default function DonorLayout() {
           </div>
         </header>
 
-        <main className="flex-1 min-w-0 p-3 sm:p-5 lg:p-6 pb-20 sm:pb-8 overflow-x-hidden">
+        <main className="flex-1 min-w-0 p-3 sm:p-5 lg:p-6 overflow-x-hidden">
           <div className="w-full min-w-0 max-w-[1600px] mx-auto">
             <Outlet />
           </div>

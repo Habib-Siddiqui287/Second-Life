@@ -11,6 +11,7 @@ export default function AdminDonations() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [search, setSearch] = useState('');
+  const [previewImage, setPreviewImage] = useState(null);
 
   const fetchDonations = () => {
     setLoading(true);
@@ -24,7 +25,8 @@ export default function AdminDonations() {
   };
 
   useEffect(() => {
-    fetchDonations();
+    const timer = setTimeout(fetchDonations, 350);
+    return () => clearTimeout(timer);
   }, [statusFilter, search]);
 
   return (
@@ -91,11 +93,13 @@ export default function AdminDonations() {
                 {donations.map((d) => (
                   <tr key={d.id} className="hover:bg-slate-50/50 transition-colors">
                     <td className="py-4 px-6 font-bold text-slate-900 flex items-center gap-3">
-                      <img src={d.primary_image}
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/images/donations/furniture.jpg';
-                    }} alt="" className="w-10 h-10 rounded-xl object-cover bg-slate-100" />
+                      {d.primary_image ? (
+                        <button type="button" onClick={() => setPreviewImage({ url: d.primary_image, title: d.title })} className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-slate-100" aria-label={`Preview image for ${d.title}`}>
+                          <img src={d.primary_image} onError={(e) => { e.currentTarget.style.display = 'none'; }} alt={d.title} className="w-full h-full object-cover" />
+                        </button>
+                      ) : (
+                        <div className="w-12 h-12 rounded-xl shrink-0 bg-slate-100 text-slate-400 flex items-center justify-center" title="No item image uploaded"><Gift className="w-5 h-5" /></div>
+                      )}
                       <span className="truncate max-w-[200px]">{d.title}</span>
                     </td>
                     <td className="py-4 px-6 font-semibold">
@@ -115,6 +119,17 @@ export default function AdminDonations() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+      {previewImage && (
+        <div className="fixed inset-0 z-[100] bg-black/70 p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-label="Donation image preview" onClick={() => setPreviewImage(null)}>
+          <div className="max-w-3xl max-h-[90vh] bg-white rounded-2xl p-3 shadow-xl" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between gap-4 px-1 pb-3">
+              <span className="font-semibold text-slate-800">{previewImage.title}</span>
+              <button type="button" onClick={() => setPreviewImage(null)} className="text-sm font-bold text-slate-600">Close</button>
+            </div>
+            <img src={previewImage.url} alt={previewImage.title} className="max-w-full max-h-[75vh] object-contain rounded-xl" />
           </div>
         </div>
       )}

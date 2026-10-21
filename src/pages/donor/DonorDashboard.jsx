@@ -54,7 +54,7 @@ export default function DonorDashboard() {
   return (
     <div className="space-y-8">
       {/* Hero Banner (Matches Design Image 6) */}
-      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#EBF5EE] via-[#F4F9F5] to-white p-5 sm:p-8 md:p-10 border border-emerald-100/70 shadow-soft flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8">
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-[#EBF5EE] via-[#F4F9F5] to-white p-8 sm:p-10 border border-emerald-100/70 shadow-soft flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="max-w-xl space-y-3 z-10">
           <span className="text-[11px] font-extrabold tracking-widest text-[#0F5D28] uppercase bg-emerald-100/80 px-3 py-1 rounded-full">
             MAKE AN IMPACT
@@ -78,54 +78,54 @@ export default function DonorDashboard() {
       </div>
 
       {/* Metrics Row (Matches Design Image 6) */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Listed</span>
             <Gift className="w-5 h-5 text-emerald-600" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{stats?.total_donations || 0}</div>
+          <div className="text-3xl font-extrabold text-slate-900">{stats?.total_donations || 0}</div>
           <div className="text-[11px] text-slate-400 mt-1">Items listed on platform</div>
         </div>
 
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Active</span>
             <Clock className="w-5 h-5 text-amber-500" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{stats?.active_donations || 0}</div>
+          <div className="text-3xl font-extrabold text-slate-900">{stats?.active_donations || 0}</div>
           <div className="text-[11px] text-slate-400 mt-1">Ready to be matched</div>
         </div>
 
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Completed</span>
             <PackageCheck className="w-5 h-5 text-teal-600" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-slate-900">{stats?.completed_donations || 0}</div>
+          <div className="text-3xl font-extrabold text-slate-900">{stats?.completed_donations || 0}</div>
           <div className="text-[11px] text-slate-400 mt-1">Successfully delivered</div>
         </div>
 
-        <div className="bg-white rounded-3xl p-4 sm:p-6 border border-slate-100 shadow-soft">
+        <div className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">People Helped</span>
             <Users className="w-5 h-5 text-[#15803D]" />
           </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-[#15803D]">{stats?.people_helped || 0}</div>
+          <div className="text-3xl font-extrabold text-[#15803D]">{stats?.people_helped || 0}</div>
           <div className="text-[11px] text-slate-400 mt-1">{Number(stats?.lifetime_weight_kg || 0).toFixed(3)}kg reused • {stats?.co2_diverted_kg || 0}kg CO2 diverted</div>
         </div>
       </div>
 
       {/* Recent Donations Table */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-soft overflow-hidden">
-        <div className="p-4 sm:p-6 border-b border-slate-50 flex items-center justify-between">
+        <div className="p-6 border-b border-slate-50 flex items-center justify-between">
           <div>
             <h3 className="font-extrabold text-base text-slate-900">Recent Donations</h3>
             <p className="text-xs text-slate-400">Track and manage your posted items</p>
           </div>
           <Link
             to="/donor/donations"
-            className="text-xs font-bold text-[#15803D] hover:text-[#0F5D28] flex items-center gap-1 shrink-0"
+            className="text-xs font-bold text-[#15803D] hover:text-[#0F5D28] flex items-center gap-1"
           >
             <span>View All</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -133,7 +133,7 @@ export default function DonorDashboard() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[540px] text-left text-xs">
+          <table className="w-full text-left text-xs">
             <thead className="bg-slate-50/75 text-slate-500 uppercase tracking-wider text-[10px] font-bold">
               <tr>
                 <th className="py-3 px-6">Item</th>

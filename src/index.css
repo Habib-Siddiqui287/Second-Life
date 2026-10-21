@@ -91,15 +91,6 @@ button, a, input, textarea, select {
 }
 
 
-/* Utility to hide scrollbar while preserving touch scroll */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
 /* ============================================================
    MOBILE LAYOUT SAFETY
    Keep dashboard controls, cards and form fields inside the

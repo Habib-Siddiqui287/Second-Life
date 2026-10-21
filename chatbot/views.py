@@ -9,7 +9,6 @@ from .models import ChatbotFAQ
 
 
 class ChatbotAssistantView(APIView):
-    authentication_classes = []
     permission_classes = [permissions.AllowAny]
 
     # =========================================================
@@ -1494,24 +1493,12 @@ class ChatbotAssistantView(APIView):
     # =========================================================
 
     def post(self, request):
-        try:
-            return self._process_message(request)
-        except Exception:
-            return Response(
-                {
-                    "reply": self.DEFAULT_RESPONSE,
-                    "suggestions": self.DEFAULT_SUGGESTIONS,
-                    "category": "general",
-                    "matched_question": None,
-                    "confidence_score": 0,
-                },
-                status=status.HTTP_200_OK
-            )
 
-    def _process_message(self, request):
-        data = request.data if isinstance(request.data, dict) else {}
         user_message = str(
-            data.get("message") or data.get("prompt") or data.get("query") or ""
+            request.data.get(
+                "message",
+                ""
+            )
         ).strip()
 
         # -----------------------------------------------------
@@ -1519,6 +1506,7 @@ class ChatbotAssistantView(APIView):
         # -----------------------------------------------------
 
         if not user_message:
+
             return Response(
                 {
                     "error": "Message cannot be empty."

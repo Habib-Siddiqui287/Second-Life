@@ -88,17 +88,17 @@ export default function DonorRequests() {
           {requests.map((r) => (
             <div
               key={r.id}
-              className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-4 sm:gap-6"
+              className="bg-white rounded-3xl p-6 border border-slate-100 shadow-soft flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
             >
               {/* Left Item Info */}
-              <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+              <div className="flex items-center gap-4 min-w-0">
                 <img
                   src={r.donation?.primary_image}
                   alt=""
-                  className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover bg-slate-100 shrink-0"
+                  className="w-16 h-16 rounded-2xl object-cover bg-slate-100 shrink-0"
                 />
                 <div className="space-y-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
+                  <div className="flex items-center gap-2">
                     <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">
                       {r.donation?.category?.name}
                     </span>
@@ -116,7 +116,7 @@ export default function DonorRequests() {
               </div>
 
               {/* Middle Message */}
-              <div className="w-full md:flex-1 md:max-w-md bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-xs text-slate-600 italic">
+              <div className="flex-1 max-w-md bg-slate-50 p-3.5 rounded-2xl border border-slate-100 text-xs text-slate-600 italic">
                 "{r.message}"
               </div>
 

@@ -112,18 +112,9 @@ export default function Sidebar({ mode = 'donor', mobileOpen = false, onClose = 
         <Link
           to="/"
           onClick={handleNavClick}
-          className="flex items-center gap-2.5 font-extrabold text-slate-900 text-base leading-none hover:opacity-80 transition-opacity"
+          className="font-extrabold text-slate-900 text-base leading-none hover:opacity-80 transition-opacity"
         >
-          <img
-            src="/images/secondlife_logo.jpeg"
-            alt="SecondLife"
-            onError={(e) => {
-              e.currentTarget.onerror = null;
-              e.currentTarget.src = '/logo.png';
-            }}
-            className="w-7 h-7 object-contain rounded-lg"
-          />
-          <span>Second<span className="text-[#15803D]">Life</span></span>
+          Second<span className="text-[#15803D]">Life</span>
         </Link>
       </div>
 

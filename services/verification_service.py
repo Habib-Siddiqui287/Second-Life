@@ -1,4 +1,4 @@
-﻿from django.utils import timezone
+from django.utils import timezone
 from django.db import transaction
 from organizations.models import Organization, OrganizationVerification
 from dashboard.models import ActivityLog
@@ -22,6 +22,29 @@ class VerificationService:
             org.user.save(update_fields=['is_verified'])
 
         org.save()
+
+        # Send approval/rejection email only after the transaction commits.
+        from django.db import transaction
+        from services.email_service import send_platform_email
+        if action_upper == 'VERIFIED':
+            email_subject = 'Your Second Life Organization Registration Is Approved'
+            email_message = (
+                f"Hello {org.contact_person},\\n\\n"
+                f"Your organization, {org.organization_name}, has been approved on Second Life. "
+                "You can now sign in and access your organization account.\\n\\n"
+                "Second Life Team"
+            )
+        else:
+            email_subject = 'Update on Your Second Life Organization Registration'
+            email_message = (
+                f"Hello {org.contact_person},\\n\\n"
+                f"Your organization, {org.organization_name}, was not approved at this time.\\n"
+                f"Reason: {notes or 'Please contact support for more information.'}\\n\\n"
+                "Second Life Team"
+            )
+        transaction.on_commit(lambda: send_platform_email(
+            org.official_email, email_subject, email_message
+        ))
 
         # Record verification log
         OrganizationVerification.objects.create(

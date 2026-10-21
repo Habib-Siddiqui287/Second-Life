@@ -117,7 +117,7 @@ export default function DonorConnections() {
 
         {/* Right Connection Detail (Matches Design Image 7 & 8) */}
         {conn && (
-          <div className="lg:col-span-8 bg-white rounded-3xl p-5 sm:p-8 border border-slate-100 shadow-soft space-y-6">
+          <div className="lg:col-span-8 bg-white rounded-3xl p-6 sm:p-8 border border-slate-100 shadow-soft space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-50 pb-4">
               <div>
                 <span className="text-[10px] font-extrabold tracking-widest text-[#15803D] uppercase">
